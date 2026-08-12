@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VenFlota — Control de Flota Petrolera</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#10213f;--ink2:#101115;--ink3:#1a3060;
+  --s:#f0f4ff;--card:#fff;--card2:#e8f0ff;
+  --border:#c8d8f0;--border2:#a0b8e0;
+  --acc:#01ddfd;--acc2:#00b8d4;--accbg:#e6fcff;
+  --teal:#00C2A8;--tealbg:#E5FAF7;
+  --blue:#264d9c;--bluebg:#eef3ff;
+  --red:#DC2626;--redbg:#FEF2F2;--redbd:#FECACA;
+  --amb:#D97706;--ambbg:#FFFBEB;--ambbd:#FDE68A;
+  --grn:#16A34A;--grnbg:#F0FDF4;--grnbd:#BBF7D0;
+  --t:#10213f;--t2:#2d4a7a;--t3:#7a9abf;
+  --r:10px;--r2:14px;--r3:20px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
+  --sh2:0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.06);
+  --f:'Inter',system-ui,sans-serif;
+  --fd:'Space Grotesk',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--s);color:var(--t);line-height:1.6;overflow-x:hidden}
+.pg{display:none;min-height:100vh}
+.pg.on{display:block}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;padding:0 32px;background:rgba(16,33,63,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(1,221,253,.1)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:14px;color:#10213f}
+.logo-name{font-family:var(--fd);font-weight:600;font-size:16px;color:#fff;letter-spacing:-.3px}
+.nav-links{margin-left:40px;display:flex;gap:28px}
+.nav-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:color .15s}
+.nav-links a:hover{color:#fff}
+.nav-r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;font-family:var(--f)}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.75);border:1px solid rgba(1,221,253,.2)}
+.btn-ghost:hover{background:rgba(1,221,253,.07);color:#fff}
+.btn-acc{background:var(--acc);color:#10213f;font-weight:600}
+.btn-acc:hover{background:var(--acc2);color:#10213f}
+.btn-out{background:transparent;color:var(--t);border:1px solid var(--border2)}
+.btn-out:hover{background:var(--card2)}
+.btn-lg{padding:13px 28px;font-size:15px;border-radius:var(--r2)}
+/* HERO */
+#pg-land{background:var(--ink2)}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:48px 48px}
+.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(1,221,253,.18) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%)}
+.hero-glow2{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(38,77,156,.20) 0%,transparent 70%);bottom:-100px;right:10%}
+.hero-c{position:relative;text-align:center;max-width:760px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(1,221,253,.12);border:1px solid rgba(1,221,253,.25);border-radius:100px;padding:5px 14px;font-size:12px;color:rgba(1,221,253,.9);letter-spacing:.5px;text-transform:uppercase;font-weight:500;margin-bottom:24px}
+.eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--acc);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:var(--fd);font-size:clamp(36px,5.5vw,62px);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--acc)}
+.hero p{font-size:17px;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto 36px;line-height:1.7}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* DEMO CARD */
+.demo-wrap{position:relative;margin:60px auto 0;max-width:720px;width:100%}
+.demo-lbl{font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase}
+.demo-card{background:rgba(1,221,253,.03);border:1px solid rgba(1,221,253,.14);border-radius:var(--r3);padding:20px;backdrop-filter:blur(8px)}
+.demo-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(1,221,253,.1)}
+.demo-dots{display:flex;gap:5px}
+.dd{width:10px;height:10px;border-radius:50%}
+.demo-ttl{font-size:12px;color:rgba(255,255,255,.35);flex:1;text-align:center}
+.live{display:flex;align-items:center;gap:5px;font-size:11px;color:#4ade80}
+.live span{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
+.demo-vs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.dv{background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.12);border-radius:var(--r);padding:12px}
+.dv-plate{font-family:var(--fd);font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.dv-info{font-size:11px;color:rgba(255,255,255,.4)}
+.dv-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;margin-top:6px}
+.ok{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.warn{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+.err{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.25)}
+/* FEATURES */
+.ft-sec{background:var(--s);padding:80px 32px}
+.sec-lbl{font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;font-weight:600;text-align:center;margin-bottom:10px}
+.sec-title{font-family:var(--fd);font-size:clamp(26px,3.5vw,40px);font-weight:700;color:var(--ink);text-align:center;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px}
+.sec-sub{text-align:center;color:var(--t2);font-size:16px;max-width:500px;margin:0 auto 48px}
+.ft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1000px;margin:0 auto}
+.ft-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:24px;transition:all .2s}
+.ft-card:hover{box-shadow:var(--sh2);border-color:var(--border2);transform:translateY(-2px)}
+.ft-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
+.ft-card h3{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.ft-card p{font-size:13px;color:var(--t2);line-height:1.6}
+/* STATS */
+.st-sec{background:var(--ink2);padding:64px 32px}
+.st-grid{display:grid;grid-template-columns:repeat(4,1fr);max-width:900px;margin:0 auto;border:1px solid rgba(1,221,253,.12);border-radius:var(--r2);overflow:hidden}
+.st-item{padding:32px 24px;border-right:1px solid rgba(255,255,255,.08);text-align:center}
+.st-item:last-child{border-right:none}
+.st-num{font-family:var(--fd);font-size:36px;font-weight:700;color:var(--acc);letter-spacing:-1px}
+.st-lbl{font-size:13px;color:rgba(255,255,255,.45);margin-top:4px}
+/* HOW */
+.how-sec{padding:80px 32px;background:var(--card)}
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1000px;margin:0 auto}
+.how-step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
+.how-step:last-child{border-bottom:none}
+.how-num{width:32px;height:32px;border-radius:50%;background:var(--accbg);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0;margin-top:2px}
+.how-step h4{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.how-step p{font-size:13px;color:var(--t2)}
+.how-vis{background:var(--ink);border-radius:var(--r3);padding:24px}
+/* CTA */
+.cta-sec{background:var(--ink2);padding:80px 32px;text-align:center}
+.cta-sec h2{font-family:var(--fd);font-size:36px;font-weight:700;color:#fff;margin-bottom:12px;letter-spacing:-.5px}
+.cta-sec p{color:rgba(255,255,255,.5);font-size:16px;margin-bottom:28px}
+footer{background:var(--ink2);border-top:1px solid rgba(1,221,253,.08);padding:28px 32px;display:flex;align-items:center;justify-content:space-between}
+footer p{font-size:12px;color:rgba(255,255,255,.3)}
+/* ─── LOGIN HUB ─── */
+#pg-login{background:var(--ink2)}
+.login-hub{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px}
+.login-hub-inner{width:100%;max-width:860px}
+.login-hub-title{text-align:center;margin-bottom:40px}
+.login-hub-title h2{font-family:var(--fd);font-size:28px;font-weight:700;color:#fff;letter-spacing:-.5px;margin-bottom:8px}
+.login-hub-title p{color:rgba(255,255,255,.45);font-size:14px}
+.login-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+/* ─── LOGIN PANEL (Admin/Supervisor) ─── */
+.lc{background:rgba(1,221,253,.03);border:1px solid rgba(1,221,253,.14);border-radius:var(--r3);padding:36px;transition:border-color .2s}
+.lc:hover{border-color:rgba(1,221,253,.25)}
+.lc-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.lc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.lc-icon-admin{background:rgba(1,221,253,.15);border:1px solid rgba(1,221,253,.3)}
+.lc-icon-chofer{background:rgba(38,77,156,.15);border:1px solid rgba(38,77,156,.3)}
+.lc-title{font-family:var(--fd);font-size:16px;font-weight:600;color:#fff}
+.lc-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+.f-label{display:block;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:6px}
+.f-input{width:100%;padding:10px 14px;background:rgba(1,221,253,.05);border:1px solid rgba(1,221,253,.16);border-radius:var(--r);font-size:13px;color:#fff;outline:none;transition:all .15s;font-family:var(--f);margin-bottom:12px}
+.f-input::placeholder{color:rgba(255,255,255,.25)}
+.f-input:focus{border-color:var(--acc);background:rgba(1,221,253,.07);box-shadow:0 0 0 3px rgba(1,221,253,.15)}
+.f-input-chofer:focus{border-color:#01ddfd;box-shadow:0 0 0 3px rgba(1,221,253,.15)}
+.role-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.role-btn{padding:8px 6px;border:1px solid rgba(1,221,253,.16);border-radius:var(--r);background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-family:var(--f);cursor:pointer;transition:all .15s;text-align:center}
+.role-btn.on{border-color:var(--acc);background:rgba(1,221,253,.12);color:var(--acc)}
+.lsub{width:100%;padding:11px;background:var(--acc);color:#10213f;font-weight:700;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s;margin-top:2px}
+.lsub:hover{background:var(--acc2)}
+.lsub-blue{background:#264d9c}
+.lsub-blue:hover{background:#1a3d80}
+.lback{display:block;text-align:center;color:rgba(255,255,255,.3);font-size:11px;margin-top:12px;cursor:pointer;transition:color .15s}
+.lback:hover{color:rgba(255,255,255,.6)}
+.chofer-badge{display:flex;align-items:center;gap:8px;background:rgba(38,77,156,.1);border:1px solid rgba(38,77,156,.2);border-radius:7px;padding:8px 10px;font-size:11px;color:#a0d8ef;margin-bottom:12px}
+/* ─── DASHBOARD ─── */
+#pg-dash{background:var(--s);min-height:100vh;display:flex;flex-direction:column}
+.dnav{height:56px;background:var(--ink);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0}
+.dnav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.dusr{display:flex;align-items:center;gap:8px}
+.dusr-av{width:28px;height:28px;border-radius:50%;background:var(--blue);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+.dusr-name{font-size:13px;color:rgba(255,255,255,.75)}
+.dusr-role{font-size:10px;color:rgba(255,255,255,.35);display:block}
+.dash-body{display:flex;flex:1;overflow:hidden}
+.sidebar{width:220px;background:var(--card);border-right:1px solid var(--border);padding:16px 10px;flex-shrink:0;overflow-y:auto}
+.sb-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);font-weight:600;padding:0 10px;margin-bottom:6px;margin-top:16px}
+.sb-lbl:first-child{margin-top:0}
+.si{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--t2);cursor:pointer;transition:all .15s}
+.si:hover{background:var(--card2);color:var(--t)}
+.si.on{background:var(--accbg);color:var(--blue);font-weight:600;border-left:3px solid var(--acc)}
+.sbadge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600;color:#fff}
+.sbd-r{background:var(--red);color:#fff}
+.sbd-a{background:var(--amb);color:#fff}
+.dmain{flex:1;overflow-y:auto;padding:20px}
+.dsec{display:none}
+.dsec.on{display:block}
+/* PAGE HEADER */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.ph h2{font-family:var(--fd);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.3px}
+.ph p{font-size:13px;color:var(--t2);margin-top:2px}
+/* METRIC CARDS */
+.mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px}
+.mc-lbl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.mc-val{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--ink);line-height:1}
+.mc-sub{font-size:11px;color:var(--t3);margin-top:4px}
+.mbadge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 8px;border-radius:5px;margin-top:6px}
+.mb-r{background:var(--redbg);color:var(--red)}
+.mb-a{background:var(--ambbg);color:var(--amb)}
+.mb-g{background:var(--grnbg);color:var(--grn)}
+.mb-b{background:var(--bluebg);color:var(--blue)}
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.ct{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--ink)}
+/* GUARDIA CARDS */
+.glist{display:flex;flex-direction:column;gap:10px}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;border-left:4px solid transparent;position:relative}
+.gc.gi{border-left-color:var(--red)}
+.gc.gr{border-left-color:var(--amb)}
+.gc.go{border-left-color:var(--grn)}
+.gc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.gav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+.gi-name{font-size:14px;font-weight:600;color:var(--ink)}
+.gi-meta{font-size:11px;color:var(--t3);margin-top:1px}
+.gstat{font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px}
+.gsi{background:var(--redbg);color:var(--red)}
+.gsr{background:var(--ambbg);color:var(--amb)}
+.gso{background:var(--grnbg);color:var(--grn)}
+.gdatos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.gd{background:var(--s);border-radius:7px;padding:7px 10px}
+.gd-l{font-size:10px;color:var(--t3)}
+.gd-v{font-size:13px;font-weight:600;color:var(--ink);margin-top:2px}
+.galerts{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.ga{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:7px;font-size:12px}
+.ga-r{background:var(--redbg);border:1px solid var(--redbd)}
+.ga-a{background:var(--ambbg);border:1px solid var(--ambbd)}
+.ga-g{background:var(--grnbg);border:1px solid var(--grnbd)}
+.ga-code{font-family:monospace;font-size:10px;color:var(--t3);margin-top:2px;display:block}
+.gact{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
+.gact-t{font-size:11px;color:var(--t2);flex:1}
+/* FILTERS */
+.frow{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:all .15s}
+.chip.on{background:var(--accbg);border-color:var(--acc);color:var(--blue);font-weight:600}
+/* GPS MAP */
+#gmap{width:100%;height:440px;border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);position:relative;background:#10213f;margin-bottom:12px}
+.mbtns{position:absolute;top:12px;right:12px;display:flex;gap:4px;z-index:2}
+.mbtn{background:rgba(16,33,63,.8);border:1px solid rgba(1,221,253,.2);color:rgba(255,255,255,.75);font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:all .15s;font-family:var(--f)}
+.mbtn.on{background:rgba(1,221,253,.8);border-color:var(--acc);color:#fff}
+.ginfo{position:absolute;left:12px;bottom:12px;background:rgba(16,33,63,.9);border:1px solid rgba(1,221,253,.14);border-radius:var(--r);padding:10px 12px;z-index:4;min-width:200px}
+.git{font-size:11px;font-weight:600;color:#fff;margin-bottom:6px}
+.gir{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px}
+.gdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.gleg{position:absolute;right:12px;bottom:12px;background:rgba(16,33,63,.85);border:1px solid rgba(1,221,253,.14);border-radius:var(--r);padding:8px 10px;z-index:4}
+.gli{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.6);margin-bottom:3px}
+.gli:last-child{margin-bottom:0}
+/* APP SIM */
+.appsim{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.phone{background:var(--ink);border:2px solid var(--ink3);border-radius:28px;padding:18px 16px}
+.pnotch{width:80px;height:6px;background:var(--ink3);border-radius:3px;margin:0 auto 14px}
+.pscreen{background:var(--s);border-radius:16px;overflow:hidden;min-height:520px}
+.pbar{padding:12px 14px;display:flex;align-items:center;gap:8px}
+.pbar-t{color:#fff;font-size:13px;font-weight:600;flex:1}
+.pcon{padding:14px}
+.poff{display:flex;align-items:center;gap:7px;background:var(--ambbg);border:1px solid var(--ambbd);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--amb);margin-bottom:12px;font-weight:500}
+.plbl{font-size:11px;font-weight:500;color:var(--t2);margin-bottom:5px;display:block}
+.pinput{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--ink);background:var(--card);outline:none;transition:all .15s;font-family:var(--f);margin-bottom:10px}
+.pinput:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(1,221,253,.15)}
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.uzone{border:2px dashed var(--border2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:var(--s);margin-bottom:10px}
+.uzone:hover{border-color:var(--acc);background:var(--accbg)}
+.uzone.done{border-color:var(--grn);background:var(--grnbg);border-style:solid}
+.ulbl{font-size:11px;color:var(--t3)}
+.ulbl.ok{color:var(--grn);font-weight:500}
+.sosb{width:100%;padding:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--fd);cursor:pointer;transition:all .15s;margin-top:6px;letter-spacing:.5px}
+.sosb:hover{background:#b91c1c}
+.sosb.triggered{background:#7f1d1d}
+@keyframes sosp{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 14px rgba(220,38,38,0)}}
+.psub{width:100%;padding:11px;background:var(--acc);color:#10213f;font-weight:600;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s;margin-top:4px}
+.psub:hover{background:var(--acc2)}
+.ptabs{display:flex;gap:0;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:12px}
+.ptab{flex:1;padding:6px;text-align:center;font-size:11px;color:var(--t3);cursor:pointer;border-radius:7px;transition:all .15s}
+.ptab.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+/* ALERTS */
+.alcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.altop{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.asev{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
+.asev-c{background:var(--red);color:#fff}
+.asev-r{background:var(--amb);color:#fff}
+.altitle{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.altime{font-size:11px;color:var(--t3)}
+.aldesc{font-size:13px;color:var(--t2);margin-bottom:10px;line-height:1.55}
+.altags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.atag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500}
+.at-r{background:var(--redbg);color:var(--red)}
+.at-a{background:var(--ambbg);color:var(--amb)}
+/* SOS BANNER */
+.sosbanner{background:var(--red);color:#fff;padding:12px 16px;border-radius:var(--r2);display:none;align-items:center;gap:12px;margin-bottom:14px}
+.sosbanner.show{display:flex;animation:ssin .3s ease-out}
+@keyframes ssin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.sosbbtns{margin-left:auto;display:flex;gap:8px}
+.sosbtn{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--f)}
+.sb-acc{background:rgba(1,221,253,.15);color:#fff}
+.sb-dis{background:transparent;color:rgba(255,255,255,.6)}
+/* TIMELINE */
+.tl{display:flex;flex-direction:column}
+.tli{display:flex;gap:12px;align-items:flex-start;padding-bottom:14px;position:relative}
+.tli::before{content:'';position:absolute;left:8px;top:18px;bottom:0;width:1px;background:var(--border)}
+.tli:last-child::before{display:none}
+.tld{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;margin-top:1px}
+.tld-g{background:var(--grnbg);border:2px solid var(--grn)}
+.tld-a{background:var(--ambbg);border:2px solid var(--amb)}
+.tld-r{background:var(--redbg);border:2px solid var(--red)}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:var(--r2);font-size:13px;box-shadow:var(--sh2);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+/* ─── APP CHOFER DASHBOARD (mobile-like) ─── */
+#pg-chofer{background:var(--ink);min-height:100vh}
+.chofer-nav{height:56px;background:rgba(38,77,156,.95);display:flex;align-items:center;padding:0 20px;gap:12px}
+.cn-title{font-family:var(--fd);font-size:15px;font-weight:600;color:#fff;flex:1}
+.chofer-body{padding:16px;max-width:420px;margin:0 auto}
+.chofer-card{background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.14);border-radius:var(--r2);padding:16px;margin-bottom:12px}
+.chofer-card h3{font-family:var(--fd);font-size:14px;font-weight:600;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cf-label{display:block;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;font-weight:500}
+.cf-input{width:100%;padding:9px 12px;background:rgba(1,221,253,.06);border:1px solid rgba(1,221,253,.16);border-radius:8px;font-size:12px;color:#fff;outline:none;transition:all .15s;font-family:var(--f);margin-bottom:10px}
+.cf-input::placeholder{color:rgba(255,255,255,.25)}
+.cf-input:focus{border-color:#01ddfd;background:rgba(1,221,253,.08);box-shadow:0 0 0 3px rgba(1,221,253,.2)}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cf-uzone{border:2px dashed rgba(255,255,255,.2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.03);margin-bottom:10px}
+.cf-uzone:hover{border-color:rgba(1,221,253,.6);background:rgba(1,221,253,.08)}
+.cf-uzone.done{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.08);border-style:solid}
+.cf-sub{width:100%;padding:12px;background:#264d9c;color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s;margin-top:2px}
+.cf-sub:hover{background:#1a3d80}
+.cf-sos{width:100%;padding:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--fd);cursor:pointer;transition:all .15s;letter-spacing:.5px;margin-top:6px}
+.cf-sos:hover{background:#b91c1c}
+.cf-sos.triggered{background:#7f1d1d;animation:sosp 1s ease-in-out 3}
+.ctabs{display:flex;gap:0;background:rgba(1,221,253,.04);border-radius:var(--r);padding:3px;margin-bottom:14px}
+.ctab{flex:1;padding:7px;text-align:center;font-size:11px;color:rgba(255,255,255,.5);cursor:pointer;border-radius:7px;transition:all .15s;font-weight:500}
+.ctab.on{background:rgba(1,221,253,.1);color:#fff}
+.ctab.sos-tab{color:rgba(248,113,113,.8)}
+.ctab.sos-tab.on{background:rgba(220,38,38,.2);color:#fca5a5}
+.cbadge{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:6px 10px;border-radius:7px;margin-bottom:10px;font-weight:500}
+.cbadge-off{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:#fbbf24}
+.cbadge-on{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:#4ade80}
+.sync-st{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.35);margin-top:8px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#fbbf24}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+@media(max-width:900px){.ft-grid{grid-template-columns:1fr 1fr}.st-grid{grid-template-columns:repeat(2,1fr)}.how-vis{display:none}.how-grid{grid-template-columns:1fr}.mrow{grid-template-columns:repeat(2,1fr)}.appsim{grid-template-columns:1fr}.sidebar{display:none}.demo-vs{grid-template-columns:1fr 1fr}.login-cards{grid-template-columns:1fr}}
+
+/* ── Signature & Chofer App Styles ── */
+.chofer-nav{height:56px;background:rgba(38,77,156,.95);display:flex;align-items:center;padding:0 20px;gap:12px}
+.cn-title{font-family:var(--fd);font-size:15px;font-weight:600;color:#fff;flex:1}
+.chofer-body{padding:16px;max-width:420px;margin:0 auto}
+.chofer-card{background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.14);border-radius:var(--r2);padding:16px;margin-bottom:12px}
+.chofer-card h3{font-family:var(--fd);font-size:14px;font-weight:600;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cf-label{display:block;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;font-weight:500}
+.cf-input{width:100%;padding:9px 12px;background:rgba(1,221,253,.06);border:1px solid rgba(1,221,253,.16);border-radius:8px;font-size:12px;color:#fff;outline:none;transition:all .15s;font-family:var(--f);margin-bottom:10px}
+.cf-input::placeholder{color:rgba(255,255,255,.25)}
+.cf-input:focus{border-color:#01ddfd;background:rgba(1,221,253,.08);box-shadow:0 0 0 3px rgba(1,221,253,.2)}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cf-uzone{border:2px dashed rgba(255,255,255,.2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.03);margin-bottom:10px}
+.cf-uzone:hover{border-color:rgba(1,221,253,.6);background:rgba(1,221,253,.08)}
+.cf-uzone.done{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.08);border-style:solid}
+.cf-sub{width:100%;padding:12px;background:#264d9c;color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s}
+.cf-sub:hover{background:#1a3d80}
+.cf-sos{width:100%;padding:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--fd);cursor:pointer;transition:all .15s;letter-spacing:.5px}
+.cf-sos:hover{background:#b91c1c}
+.cf-sos.triggered{background:#7f1d1d}
+.ctabs{display:flex;gap:0;background:rgba(1,221,253,.04);border-radius:var(--r);padding:3px;margin-bottom:14px}
+.ctab{flex:1;padding:6px 2px;text-align:center;font-size:10px;color:rgba(255,255,255,.5);cursor:pointer;border-radius:7px;transition:all .15s;font-weight:500}
+.ctab.on{background:rgba(1,221,253,.1);color:#fff}
+.ctab.sos-tab{color:rgba(248,113,113,.8)}
+.ctab.sos-tab.on{background:rgba(220,38,38,.2);color:#fca5a5}
+.cbadge{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:6px 10px;border-radius:7px;margin-bottom:10px;font-weight:500}
+.cbadge-off{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:#fbbf24}
+
+/* ── Brand polish ── */
+body{background:var(--s)}
+.pg-land-nav-override,
+#pg-land nav,.hero~footer{background:transparent}
+/* Sidebar refinements */
+.sidebar{border-right:2px solid var(--border)}
+.si{border-left:3px solid transparent;transition:all .15s}
+.si:hover{background:var(--card2);border-left-color:var(--acc)}
+/* Dashboard section headings */
+.ph h2{color:var(--ink)}
+.ph p{color:var(--t2)}
+/* Metric card value accent */
+.mc-val{color:var(--ink)}
+/* Card border accent on hover */
+.card:hover{border-color:var(--acc);transition:border-color .2s}
+/* Feature card icon accent ring */
+.ft-icon{box-shadow:0 0 0 1px rgba(1,221,253,.2)}
+/* Stat section dark bg text */
+.st-sec .st-lbl{color:rgba(255,255,255,.5)}
+/* CTA section */
+.cta-sec h2{color:#fff}
+.cta-sec p{color:rgba(255,255,255,.55)}
+/* Footer */
+footer p{color:rgba(255,255,255,.35)}
+/* Login hub cards */
+.lc-title{color:#fff}
+.lc-sub{color:rgba(255,255,255,.45)}
+/* Chofer app dark bg */
+#pg-chofer{background:var(--ink2)}
+/* Ensure hero grid mask */
+.hero-grid{mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 20%,transparent 80%)}
+/* GPS map container */
+#gmap{border:2px solid var(--blue)}
+/* Planilla cards on hover */
+.planilla-card:hover{box-shadow:0 4px 20px rgba(1,221,253,.12);border-color:var(--acc)!important;transition:all .2s}
+/* SOS banner stays vivid red */
+.sosbanner{border:1px solid rgba(220,38,38,.5)}
+/* Toast dark navy */
+.toast{background:var(--ink);border:1px solid rgba(1,221,253,.2);color:#fff}
+/* Sign canvas focus ring */
+#sig-canvas{border:2px solid var(--border)!important}
+#sig-canvas:active{border-color:var(--acc)!important}
+/* Btn outline on dark bg */
+.lc .btn-ghost,.lc .btn-out{border-color:rgba(1,221,253,.2);color:rgba(255,255,255,.7)}
+
+</style>
+</head>
+<body>
+
+<!-- ════════ LANDING ════════ -->
+<div id="pg-land" class="pg on">
+<nav>
+  <a class="logo" href="#"><div class="logo-mark">VF</div><span class="logo-name">VenFlota</span></a>
+  <div class="nav-links">
+    <a href="#features">Características</a>
+    <a href="#how">Cómo funciona</a>
+    <a href="#">SHA / PDVSA</a>
+  </div>
+  <div class="nav-r">
+    <button class="btn btn-ghost" onclick="go('pg-login')">Iniciar sesión</button>
+    <button class="btn btn-acc" onclick="go('pg-login')">Acceder →</button>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-bg"><div class="hero-grid"></div><div class="hero-glow"></div><div class="hero-glow2"></div></div>
+  <div class="hero-c">
+    <div class="eyebrow"><span></span>Auditoría en tiempo real · SHA compatible</div>
+    <h1>Control total de tu<br><em>flota petrolera</em></h1>
+    <p>Guardias digitales, GPS satelital, control SHA de velocidad y alerta SOS. Funciona offline en zonas sin señal.</p>
+    <div class="hero-cta">
+      <button class="btn btn-acc btn-lg" onclick="go('pg-login')">Entrar al panel →</button>
+      <button class="btn btn-ghost btn-lg" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Ver características</button>
+    </div>
+  </div>
+  <div class="demo-wrap">
+    <div class="demo-lbl">Vista previa del panel de auditoría</div>
+    <div class="demo-card">
+      <div class="demo-bar">
+        <div class="demo-dots"><div class="dd" style="background:#ff5f57"></div><div class="dd" style="background:#febc2e"></div><div class="dd" style="background:#28c840"></div></div>
+        <div class="demo-ttl">VenFlota — PDVSA Distrito Norte · Turno activo</div>
+        <div class="live"><span></span>En vivo</div>
+      </div>
+      <div class="demo-vs">
+        <div class="dv"><div class="dv-plate">AAB-345</div><div class="dv-info">Toyota Hilux · J. Materán</div><div class="dv-info">Taladro 105</div><span class="dv-badge err">🚨 67 km/h en zona 30</span></div>
+        <div class="dv"><div class="dv-plate">BAC-712</div><div class="dv-info">Encava ENT 610 · R. Medina</div><div class="dv-info">Tigrito–El Tigre</div><span class="dv-badge warn">⚠ KM desfase +42</span></div>
+        <div class="dv"><div class="dv-plate">XAZ-201</div><div class="dv-info">Yutong ZK6118 · L. Pérez</div><div class="dv-info">Pariaguán–San Tomé</div><span class="dv-badge ok">✓ Sin anomalías</span></div>
+      </div>
+      <div style="background:rgba(16,33,63,.5);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);height:80px;overflow:hidden">
+        <svg viewBox="0 0 700 80" preserveAspectRatio="none" style="width:100%;height:100%">
+          <rect width="700" height="80" fill="#10213f"/>
+          <ellipse cx="100" cy="50" rx="70" ry="30" fill="#1a3a1a" opacity=".5"/>
+          <ellipse cx="580" cy="30" rx="60" ry="25" fill="#1a3a1a" opacity=".4"/>
+          <path d="M20 60 Q150 40 280 45 Q400 50 520 25 Q620 10 690 15" fill="none" stroke="#475569" stroke-width="6"/>
+          <path d="M20 60 Q150 40 280 45 Q400 50 520 25 Q620 10 690 15" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="16 8"/>
+          <circle cx="200" cy="43" r="6" fill="#22c55e"/><circle cx="200" cy="43" r="11" fill="#22c55e" opacity=".2"/>
+          <circle cx="360" cy="48" r="6" fill="#ef4444"/><circle cx="360" cy="48" r="11" fill="#ef4444" opacity=".2"/>
+          <circle cx="560" cy="22" r="5" fill="#94a3b8"/>
+          <text x="205" y="34" fill="#fff" font-size="9" font-family="monospace">XAZ-201 ✓</text>
+          <text x="335" y="64" fill="#fca5a5" font-size="9" font-family="monospace">AAB-345 !</text>
+          <text x="535" y="16" fill="#94a3b8" font-size="9" font-family="monospace">BAC-712</text>
+          <text x="15" y="73" fill="#64748b" font-size="8" font-family="monospace">Tigrito</text>
+          <text x="650" y="28" fill="#64748b" font-size="8" font-family="monospace">El Tigre</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ft-sec" id="features">
+  <div class="sec-lbl">Módulos del sistema</div>
+  <h2 class="sec-title">Todo lo que necesita tu operación</h2>
+  <p class="sec-sub">Desde el inicio de guardia hasta la auditoría automática.</p>
+  <div class="ft-grid">
+    <div class="ft-card"><div class="ft-icon" style="background:var(--accbg)">📋</div><h3>Formularios offline</h3><p>Inicio y cierre con foto obligatoria de odómetro y voucher de combustible. Sin conexión y sincroniza automáticamente.</p></div>
+    <div class="ft-card"><div class="ft-icon" style="background:var(--tealbg)">🛰️</div><h3>GPS satelital en vivo</h3><p>Rastreo sobre mapa satelital. Rutas asignadas vs. reales. Detección de desvíos en tiempo real.</p></div>
+    <div class="ft-card"><div class="ft-icon" style="background:var(--redbg)">🚨</div><h3>Auditoría SHA automática</h3><p>Detecta excesos de velocidad por zona (taladros 30 km/h, carretera 80 km/h) con evidencia GPS para el expediente.</p></div>
+    <div class="ft-card"><div class="ft-icon" style="background:var(--ambbg)">⛽</div><h3>Control de combustible</h3><p>Rendimiento km/litro por modelo. Detecta fugas, sifones o sobreconsumo con alerta al supervisor.</p></div>
+    <div class="ft-card"><div class="ft-icon" style="background:var(--bluebg)">📏</div><h3>Cruce de kilometraje</h3><p>Compara KM inicial declarado vs. KM final de guardia anterior. Cualquier desfase genera alerta de revisión.</p></div>
+    <div class="ft-card"><div class="ft-icon" style="background:var(--redbg)">🆘</div><h3>Botón SOS de emergencia</h3><p>Un toque desde la app envía alerta al panel con GPS, datos del vehículo y tipo de auxilio (grúa, médica, vehículo).</p></div>
+  </div>
+</section>
+
+<section class="st-sec">
+  <div class="st-grid">
+    <div class="st-item"><div class="st-num">99.7%</div><div class="st-lbl">Disponibilidad del sistema</div></div>
+    <div class="st-item"><div class="st-num">&lt;30s</div><div class="st-lbl">Alerta SHA al supervisor</div></div>
+    <div class="st-item"><div class="st-num">100%</div><div class="st-lbl">Funcional sin señal 4G</div></div>
+    <div class="st-item"><div class="st-num">0</div><div class="st-lbl">Papel en el proceso</div></div>
+  </div>
+</section>
+
+<section class="how-sec" id="how">
+  <div class="how-grid">
+    <div>
+      <div class="sec-lbl" style="text-align:left">Flujo de operación</div>
+      <h2 class="sec-title" style="text-align:left;margin-bottom:28px">Así funciona cada turno</h2>
+      <div>
+        <div class="how-step"><div class="how-num">1</div><div><h4>Chofer inicia sesión en la app</h4><p>Completa el formulario con odómetro, combustible y ruta. Adjunta fotos obligatorias. Se guarda offline si no hay señal.</p></div></div>
+        <div class="how-step"><div class="how-num">2</div><div><h4>GPS registra la ruta en tiempo real</h4><p>Posición cada 30 segundos. El motor SHA monitorea velocidad según zonas: taladros, carretera, base.</p></div></div>
+        <div class="how-step"><div class="how-num">3</div><div><h4>Cierre de guardia con evidencia</h4><p>Registra KM final y foto del odómetro. La app sincroniza al recuperar señal.</p></div></div>
+        <div class="how-step"><div class="how-num">4</div><div><h4>Motor de auditoría genera la ficha</h4><p>El sistema cruza KM, combustible y velocidades. Cualquier anomalía aparece en el panel con código y acción sugerida.</p></div></div>
+      </div>
+    </div>
+    <div class="how-vis">
+      <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:14px">Ficha de auditoría generada</div>
+      <div style="background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.12);border-radius:10px;padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444"></div><span style="font-size:12px;font-weight:600;color:#fff">GRD-2025-001 · Infracción</span></div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.9"><div>José Materán · AAB-345</div><div>Noche · Taladro 105</div><div style="color:#fca5a5;font-weight:500;margin-top:4px">⚡ INFRACCION_VELOCIDAD_SHA</div><div style="color:#fca5a5">67 km/h en zona 30 · 2 min 04 s</div></div>
+      </div>
+      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="width:8px;height:8px;border-radius:50%;background:#fbbf24"></div><span style="font-size:12px;font-weight:600;color:#fff">GRD-2025-002 · Revisión</span></div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5)"><div style="color:#fde68a">⚠ DESVIACION_KILOMETRAJE +42 km</div><div style="color:#fde68a">⚠ POSIBLE_FUGA 3.8 km/L vs 6.5 esp.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec">
+  <h2>Listo para digitalizar tu flota</h2>
+  <p>Implementación en menos de 48 horas. Sin hardware adicional.</p>
+  <button class="btn btn-acc btn-lg" onclick="go('pg-login')">Acceder ahora →</button>
+</section>
+<footer>
+  <p>© 2025 VenFlota · Control de flota petrolera · Venezuela</p>
+  <p>Compatible SHA · PDVSA · SIDOR</p>
+</footer>
+</div>
+
+<!-- ════════ LOGIN HUB ════════ -->
+<div id="pg-login" class="pg">
+<nav>
+  <a class="logo" href="#" onclick="go('pg-land');return false"><div class="logo-mark">VF</div><span class="logo-name">VenFlota</span></a>
+  <div class="nav-r"><button class="btn btn-ghost" onclick="go('pg-land')">← Inicio</button></div>
+</nav>
+<div class="login-hub">
+  <div class="login-hub-inner">
+    <div class="login-hub-title">
+      <h2>¿Cómo vas a ingresar?</h2>
+      <p>Selecciona tu tipo de acceso para continuar</p>
+    </div>
+    <div class="login-cards">
+      <!-- PANEL ADMIN/SUPERVISOR -->
+      <div class="lc">
+        <div class="lc-header">
+          <div class="lc-icon lc-icon-admin">🖥️</div>
+          <div><div class="lc-title">Panel de auditoría</div><div class="lc-sub">Administradores y supervisores</div></div>
+        </div>
+        <div class="form-group">
+          <label class="f-label">Correo electrónico</label>
+          <input class="f-input" type="email" placeholder="supervisor@empresa.com" id="a-email">
+        </div>
+        <div class="form-group">
+          <label class="f-label">Contraseña</label>
+          <input class="f-input" type="password" placeholder="••••••••" id="a-pass" onkeypress="if(event.key==='Enter')loginAdmin()">
+        </div>
+        <label class="f-label" style="margin-bottom:8px;display:block">Rol</label>
+        <div class="role-row">
+          <button class="role-btn on" id="r-admin" onclick="selR('admin')">👤 Administrador</button>
+          <button class="role-btn" id="r-supervisor" onclick="selR('supervisor')">🔧 Supervisor</button>
+          <button class="role-btn" id="r-ope" onclick="selR('operaciones')">📊 Operaciones</button>
+          <button class="role-btn" id="r-seg" onclick="selR('seguridad')">🛡️ Seguridad SHA</button>
+        </div>
+        <button class="lsub" onclick="loginAdmin()">Entrar al panel de auditoría</button>
+        <span class="lback" onclick="go('pg-land')">← Volver al inicio</span>
+      </div>
+      <!-- APP CHOFER -->
+      <div class="lc">
+        <div class="lc-header">
+          <div class="lc-icon lc-icon-chofer">📱</div>
+          <div><div class="lc-title">App del chofer</div><div class="lc-sub">Conductores · Inicio de guardia</div></div>
+        </div>
+        <div class="chofer-badge">📶 La app funciona sin conexión a internet</div>
+        <div class="form-group">
+          <label class="f-label">Número de cédula / ID</label>
+          <input class="f-input f-input-chofer" type="text" placeholder="V-12345678" id="c-cedula">
+        </div>
+        <div class="form-group">
+          <label class="f-label">PIN de 4 dígitos</label>
+          <input class="f-input f-input-chofer" type="password" maxlength="4" placeholder="••••" id="c-pin" onkeypress="if(event.key==='Enter')loginChofer()">
+        </div>
+        <div class="form-group">
+          <label class="f-label">Placa del vehículo asignado</label>
+          <input class="f-input f-input-chofer" type="text" placeholder="AAB-345" id="c-placa">
+        </div>
+        <button class="lsub lsub-blue" onclick="loginChofer()">Entrar a la app del chofer</button>
+        <span class="lback" onclick="go('pg-land')">← Volver al inicio</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════ DASHBOARD (Admin) ════════ -->
+<div id="pg-dash" class="pg">
+<div class="dnav">
+  <div class="logo-mark" style="width:28px;height:28px;font-size:12px;color:#10213f">VF</div>
+  <span style="font-family:var(--fd);font-weight:600;font-size:15px;color:#fff">VenFlota</span>
+  <span style="font-size:12px;color:rgba(255,255,255,.3);margin-left:8px">PDVSA · Distrito Norte</span>
+  <div class="dnav-right">
+    <div id="sos-bell" style="display:none;cursor:pointer;position:relative" onclick="showSec('alertas')">
+      <span style="font-size:18px">🔔</span>
+      <div id="sos-bell-n" style="position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:var(--red);border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center">1</div>
+    </div>
+    <div class="dusr">
+      <div class="dusr-av" id="d-av" style="background:var(--acc)">JG</div>
+      <div><div class="dusr-name" id="d-nm">Jorge García</div><span class="dusr-role" id="d-rl">Administrador</span></div>
+    </div>
+    <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px" onclick="go('pg-land')">Salir</button>
+  </div>
+</div>
+<div class="dash-body">
+<div class="sidebar">
+  <div class="sb-lbl">Principal</div>
+  <div class="si on" id="si-guardias" onclick="showSec('guardias')">📋 Guardias <span class="sbadge sbd-r">3</span></div>
+  <div class="si" id="si-alertas" onclick="showSec('alertas')">🔔 Alertas <span class="sbadge sbd-r">3</span></div>
+  <div class="si" id="si-gps" onclick="showSec('gps')">🛰️ GPS / Mapa</div>
+  <div class="si" id="si-app" onclick="showSec('app')">📱 App Chofer (sim)</div>
+  <div class="si" id="si-firmas" onclick="showSec('firmas')">✍️ Firmas digitales <span class="sbadge sbd-a" style="margin-left:auto">2</span></div>
+  <div class="sb-lbl">Reportes</div>
+  <div class="si" id="si-flota" onclick="showSec('flota')">🚛 Flota</div>
+  <div class="si" id="si-consumo" onclick="showSec('consumo')">⛽ Combustible</div>
+</div>
+<div class="dmain">
+
+<!-- SOS BANNER -->
+<div class="sosbanner" id="sos-banner">
+  <span style="font-size:22px">🚨</span>
+  <div>
+    <div style="font-size:14px;font-weight:700;font-family:var(--fd)">ALERTA SOS — Chofer requiere auxilio</div>
+    <div style="font-size:12px;opacity:.85;margin-top:2px" id="sos-msg">...</div>
+  </div>
+  <div class="sosbbtns">
+    <button class="sosbtn sb-acc" onclick="acceptSos()">✓ Despachar auxilio</button>
+    <button class="sosbtn sb-dis" onclick="dismissSos()">✕</button>
+  </div>
+</div>
+
+<!-- ── GUARDIAS ── -->
+<div class="dsec on" id="sec-guardias">
+  <div class="ph"><div><h2>Guardias del día</h2><p id="g-sub">Hoy · 29 Jul 2025 · 3 alertas activas</p></div><button class="btn btn-out" onclick="showSec('app')">+ Nueva guardia</button></div>
+  <div class="mrow">
+    <div class="mc"><div class="mc-lbl">Total guardias</div><div class="mc-val">12</div><span class="mbadge mb-g">8 aprobadas</span></div>
+    <div class="mc"><div class="mc-lbl">Infracciones SHA</div><div class="mc-val" style="color:var(--red)">3</div><span class="mbadge mb-r">Acción requerida</span></div>
+    <div class="mc"><div class="mc-lbl">Bajo revisión</div><div class="mc-val" style="color:var(--amb)">2</div><span class="mbadge mb-a">KM / Combustible</span></div>
+    <div class="mc"><div class="mc-lbl">Rendimiento flota</div><div class="mc-val">7.4</div><div class="mc-sub">km/litro promedio</div></div>
+  </div>
+  <div class="frow">
+    <div class="chip on" onclick="fG('all',this)">Todas (12)</div>
+    <div class="chip" onclick="fG('gi',this)">🚨 Infracción</div>
+    <div class="chip" onclick="fG('gr',this)">⚠️ Revisión</div>
+    <div class="chip" onclick="fG('go',this)">✓ Aprobadas</div>
+  </div>
+  <div class="glist">
+    <div class="gc gi" data-t="gi">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">GRD-2025-001</div>
+      <div class="gc-top">
+        <div class="gav" style="background:var(--redbg);color:var(--red)">JM</div>
+        <div><div class="gi-name">José Materán</div><div class="gi-meta">Toyota Hilux · AAB-345 · Turno noche · Taladro 105 → Base</div></div>
+        <span class="gstat gsi">🚨 Infracción SHA</span>
+      </div>
+      <div class="gdatos">
+        <div class="gd"><div class="gd-l">KM Inicial</div><div class="gd-v">48,210</div></div>
+        <div class="gd"><div class="gd-l">KM Final</div><div class="gd-v">48,387</div></div>
+        <div class="gd"><div class="gd-l">Recorrido</div><div class="gd-v">177 km</div></div>
+        <div class="gd"><div class="gd-l">Combustible</div><div class="gd-v">24 L</div></div>
+      </div>
+      <div class="galerts">
+        <div class="ga ga-r"><span>🚨</span><div><div>Exceso de velocidad: <strong>67 km/h</strong> en zona <strong>30 km/h</strong> — 2 min 04 s</div><span class="ga-code">INFRACCION_VELOCIDAD_SHA · GPS: 09°34'N 64°11'W · 02:18 am</span></div></div>
+      </div>
+      <div class="gact">
+        <span class="gact-t">→ Aplicar amonestación SHA. Foto odómetro: ✓ recibida.</span>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="toast('Guardia archivada')">Archivar</button>
+        <button class="btn btn-acc" style="font-size:11px;padding:5px 12px;color:#10213f" onclick="toast('Amonestación SHA generada para José Materán')">Amonestar</button>
+      </div>
+    </div>
+    <div class="gc gr" data-t="gr">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">GRD-2025-002</div>
+      <div class="gc-top">
+        <div class="gav" style="background:var(--ambbg);color:var(--amb)">RM</div>
+        <div><div class="gi-name">Ramón Medina</div><div class="gi-meta">Encava ENT 610 · BAC-712 · Turno mañana · Ruta Tigrito–El Tigre</div></div>
+        <span class="gstat gsr">⚠️ Bajo revisión</span>
+      </div>
+      <div class="gdatos">
+        <div class="gd"><div class="gd-l">KM Inicial</div><div class="gd-v">122,540</div></div>
+        <div class="gd"><div class="gd-l">KM Final</div><div class="gd-v">122,998</div></div>
+        <div class="gd"><div class="gd-l">Recorrido</div><div class="gd-v">458 km</div></div>
+        <div class="gd"><div class="gd-l">Rendimiento</div><div class="gd-v" style="color:var(--amb)">3.8 km/L ⚠</div></div>
+      </div>
+      <div class="galerts">
+        <div class="ga ga-a"><span>⚠️</span><div><div>KM inicial no coincide. Desfase: <strong>+42 km</strong> sin justificación.</div><span class="ga-code">DESVIACION_KILOMETRAJE · GRD-2025-000 KM_FINAL: 122,498</span></div></div>
+        <div class="ga ga-a"><span>⚠️</span><div><div>Rendimiento bajo para Encava ENT 610. Esperado: 6–7 km/L. Real: <strong>3.8 km/L</strong>.</div><span class="ga-code">POSIBLE_FUGA_O_SOBRECONSUMO · 120 L declarados</span></div></div>
+      </div>
+      <div class="gact">
+        <span class="gact-t">→ Solicitar foto odómetro y voucher combustible.</span>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="toast('Solicitud enviada al chofer')">Solicitar evidencia</button>
+        <button class="btn btn-acc" style="font-size:11px;padding:5px 12px;color:#10213f" onclick="toast('Inspección mecánica programada para BAC-712')">Inspección mecánica</button>
+      </div>
+    </div>
+    <div class="gc go" data-t="go">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">GRD-2025-003</div>
+      <div class="gc-top">
+        <div class="gav" style="background:var(--grnbg);color:var(--grn)">LP</div>
+        <div><div class="gi-name">Luis Pérez</div><div class="gi-meta">Yutong ZK6118 · XAZ-201 · Turno tarde · Pariaguán–San Tomé</div></div>
+        <span class="gstat gso">✓ Aprobado</span>
+      </div>
+      <div class="gdatos">
+        <div class="gd"><div class="gd-l">KM Inicial</div><div class="gd-v">74,320</div></div>
+        <div class="gd"><div class="gd-l">KM Final</div><div class="gd-v">74,568</div></div>
+        <div class="gd"><div class="gd-l">Recorrido</div><div class="gd-v">248 km</div></div>
+        <div class="gd"><div class="gd-l">Rendimiento</div><div class="gd-v" style="color:var(--grn)">6.9 km/L ✓</div></div>
+      </div>
+      <div class="galerts">
+        <div class="ga ga-g"><span>✅</span><div>Sin anomalías. KM, consumo y velocidades dentro de parámetros. Fotos recibidas ✓</div></div>
+      </div>
+      <div class="gact"><span class="gact-t" style="color:var(--t3)">Sin acción requerida.</span><button class="btn btn-out" style="font-size:11px;padding:5px 10px">Ver detalle</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ALERTAS ── -->
+<div class="dsec" id="sec-alertas">
+  <div class="ph"><div><h2>Centro de alertas</h2><p>Alertas operativas activas</p></div></div>
+  <div class="alcard" style="border-left:4px solid var(--red)">
+    <div class="altop"><span class="asev asev-c">Crítico</span><span class="altitle">INFRACCION_VELOCIDAD_SHA</span><span class="altime">02:18 am · hace 5h</span></div>
+    <p class="aldesc">José Materán (AAB-345) — 67 km/h dentro de locación Taladro 105. Límite SHA: 30 km/h. Duración: 2 min 04 s. GPS verificado.</p>
+    <div class="altags"><span class="atag at-r">GRD-2025-001</span><span class="atag at-r">GPS verificado</span><span class="atag at-r">SHA Art. 14</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-out" style="font-size:12px" onclick="toast('Amonestación generada')">Generar amonestación</button>
+      <button class="btn btn-out" style="font-size:12px" onclick="toast('Supervisor notificado')">Notificar supervisor</button>
+      <button class="btn btn-out" style="font-size:12px;color:var(--t3)" onclick="this.closest('.alcard').remove();toast('Alerta archivada')">Archivar</button>
+    </div>
+  </div>
+  <div class="alcard" style="border-left:4px solid var(--amb)">
+    <div class="altop"><span class="asev asev-r">Revisión</span><span class="altitle">DESVIACION_KILOMETRAJE</span><span class="altime">08:05 am · hace 2h</span></div>
+    <p class="aldesc">Ramón Medina (BAC-712) — KM inicial: 122,540. KM final guardia anterior: 122,498. Desfase: +42 km.</p>
+    <div class="altags"><span class="atag at-a">GRD-2025-002</span><span class="atag at-a">Odómetro requerido</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-out" style="font-size:12px" onclick="toast('Solicitud enviada al chofer')">Solicitar foto odómetro</button>
+      <button class="btn btn-out" style="font-size:12px;color:var(--t3)" onclick="this.closest('.alcard').remove();toast('Alerta archivada')">Archivar</button>
+    </div>
+  </div>
+  <div class="alcard" style="border-left:4px solid var(--amb)">
+    <div class="altop"><span class="asev asev-r">Revisión</span><span class="altitle">POSIBLE_FUGA_O_SOBRECONSUMO</span><span class="altime">08:05 am · hace 2h</span></div>
+    <p class="aldesc">Encava ENT 610 (BAC-712) — 3.8 km/L real vs. 5.5 km/L mínimo esperado. Posible fuga, sifón o sobrecarga.</p>
+    <div class="altags"><span class="atag at-a">GRD-2025-002</span><span class="atag at-a">Inspección mecánica</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-out" style="font-size:12px" onclick="toast('Inspección programada para BAC-712')">Programar inspección</button>
+      <button class="btn btn-out" style="font-size:12px;color:var(--t3)" onclick="this.closest('.alcard').remove();toast('Alerta archivada')">Archivar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GPS ── -->
+<div class="dsec" id="sec-gps">
+  <div class="ph"><div><h2>GPS / Mapa satelital</h2><p>3 unidades activas en tiempo real</p></div><button class="btn btn-out" onclick="toast('Posiciones actualizadas')">↻ Actualizar</button></div>
+  <div id="gmap">
+    <svg viewBox="0 0 800 440" style="position:absolute;inset:0;width:100%;height:100%">
+      <rect width="800" height="440" fill="#10213f"/>
+      <ellipse cx="120" cy="120" rx="90" ry="60" fill="#1a3a1a" opacity=".5"/>
+      <ellipse cx="640" cy="80" rx="70" ry="45" fill="#1a3a1a" opacity=".4"/>
+      <ellipse cx="400" cy="300" rx="120" ry="80" fill="#1a3a1a" opacity=".35"/>
+      <ellipse cx="700" cy="360" rx="80" ry="55" fill="#2a2a1a" opacity=".4"/>
+      <path d="M30 280 Q120 260 200 240 Q300 220 420 195 Q520 175 640 155 Q720 140 780 135" fill="none" stroke="#475569" stroke-width="10"/>
+      <path d="M30 280 Q120 260 200 240 Q300 220 420 195 Q520 175 640 155 Q720 140 780 135" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="20 10"/>
+      <path d="M420 195 Q440 250 460 320 Q470 370 480 440" fill="none" stroke="#334155" stroke-width="6"/>
+      <path d="M420 195 Q440 250 460 320 Q470 370 480 440" fill="none" stroke="#64748b" stroke-width="2"/>
+      <rect x="330" y="155" width="100" height="80" rx="6" fill="rgba(239,68,68,.08)" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
+      <text x="380" y="178" fill="#fca5a5" font-size="9" text-anchor="middle" font-family="monospace">TALADRO 105</text>
+      <text x="380" y="192" fill="#f87171" font-size="8" text-anchor="middle" font-family="monospace">ZONA 30 km/h</text>
+      <circle cx="30" cy="280" r="5" fill="#60a5fa"/>
+      <text x="42" y="296" fill="#a0d8ef" font-size="10" font-family="monospace">Tigrito</text>
+      <circle cx="780" cy="135" r="5" fill="#60a5fa"/>
+      <text x="748" y="128" fill="#a0d8ef" font-size="10" font-family="monospace">El Tigre</text>
+      <path d="M30 280 Q80 270 130 260 Q170 252 210 237" fill="none" stroke="#22c55e" stroke-width="2" opacity=".5" stroke-dasharray="5 4"/>
+      <circle cx="210" cy="237" r="9" fill="#22c55e" opacity=".9"/>
+      <circle cx="210" cy="237" r="16" fill="#22c55e" opacity=".15"><animate attributeName="r" values="14;20;14" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".15;0;.15" dur="2s" repeatCount="indefinite"/></circle>
+      <text x="210" y="224" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">XAZ-201</text>
+      <text x="210" y="214" fill="#86efac" font-size="8" text-anchor="middle" font-family="monospace">74 km/h ✓</text>
+      <circle cx="370" cy="185" r="9" fill="#ef4444" opacity=".9"/>
+      <circle cx="370" cy="185" r="16" fill="#ef4444" opacity=".2"><animate attributeName="r" values="14;22;14" dur="1.2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".2;0;.2" dur="1.2s" repeatCount="indefinite"/></circle>
+      <text x="370" y="172" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">AAB-345</text>
+      <text x="370" y="162" fill="#fca5a5" font-size="8" text-anchor="middle" font-family="monospace">⚠ 67 km/h</text>
+      <circle cx="600" cy="162" r="7" fill="#94a3b8" opacity=".8"/>
+      <text x="600" y="150" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace">BAC-712</text>
+      <text x="600" y="140" fill="#94a3b8" font-size="8" text-anchor="middle" font-family="monospace">Parado · offline</text>
+    </svg>
+    <div class="mbtns">
+      <button class="mbtn on" id="mb-sat" onclick="mMode('sat',this)">Satelital</button>
+      <button class="mbtn" id="mb-map" onclick="mMode('map',this)">Mapa</button>
+      <button class="mbtn" id="mb-tf" onclick="mMode('traf',this)">Tráfico</button>
+    </div>
+    <div class="ginfo">
+      <div class="git">Estado de flota</div>
+      <div class="gir"><div class="gdot" style="background:#22c55e"></div>XAZ-201 — En ruta · 74 km/h</div>
+      <div class="gir"><div class="gdot" style="background:#ef4444"></div>AAB-345 — ⚠ 67 km/h zona 30</div>
+      <div class="gir"><div class="gdot" style="background:#94a3b8"></div>BAC-712 — Sin señal</div>
+    </div>
+    <div class="gleg">
+      <div class="gli"><div class="gdot" style="background:#22c55e"></div>En ruta</div>
+      <div class="gli"><div class="gdot" style="background:#ef4444"></div>Alerta velocidad</div>
+      <div class="gli"><div class="gdot" style="background:#94a3b8"></div>Parado/sin señal</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px">
+    <div class="card" style="border-left:3px solid var(--grn)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="ct">XAZ-201 · L. Pérez</div><div style="font-size:11px;color:var(--t3)">Yutong ZK6118</div></div><span class="mbadge mb-g">En ruta</span></div><div style="font-size:12px;color:var(--t2);line-height:1.8"><div>Vel: <strong>74 km/h</strong> ✓</div><div>Pariaguán → San Tomé</div><div style="font-size:10px;color:var(--t3)">09°29'N 64°08'W</div></div></div>
+    <div class="card" style="border-left:3px solid var(--red)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="ct">AAB-345 · J. Materán</div><div style="font-size:11px;color:var(--t3)">Toyota Hilux</div></div><span class="mbadge mb-r">⚠ Alerta</span></div><div style="font-size:12px;color:var(--t2);line-height:1.8"><div>Vel: <strong style="color:var(--red)">67 km/h</strong> ⚠ zona 30</div><div>Taladro 105</div><div style="font-size:10px;color:var(--t3)">09°34'N 64°11'W</div></div></div>
+    <div class="card" style="border-left:3px solid var(--t3)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div class="ct">BAC-712 · R. Medina</div><div style="font-size:11px;color:var(--t3)">Encava ENT 610</div></div><span class="mbadge mb-b">Sin señal</span></div><div style="font-size:12px;color:var(--t2);line-height:1.8"><div>Última pos.: 09°31'N 64°09'W</div><div>Hace: 45 min</div><div>Tigrito → El Tigre</div></div></div>
+  </div>
+  <div style="padding:10px 14px;background:var(--ambbg);border:1px solid var(--ambbd);border-radius:var(--r);font-size:12px;color:var(--amb)">ℹ️ <strong>Integración Google Maps:</strong> En producción, inicializa <code>new google.maps.Map()</code> con tu API Key para mapa satelital dinámico y seguimiento de ruta en tiempo real.</div>
+</div>
+
+<!-- ── APP CHOFER SIM ── -->
+<div class="dsec" id="sec-app">
+  <div class="ph"><div><h2>Simulador App Chofer</h2><p>Vista previa del flujo de guardia del conductor</p></div></div>
+  <div class="appsim">
+    <div>
+      <div class="phone">
+        <div class="pnotch"></div>
+        <div class="pscreen">
+          <div class="pbar" style="background:var(--acc)">
+            <span style="font-size:14px;color:rgba(255,255,255,.7)">←</span>
+            <span class="pbar-t" id="pt-title">Inicio de guardia</span>
+            <span style="font-size:15px;color:rgba(255,255,255,.6)">⋮</span>
+          </div>
+          <div class="pcon">
+            <div class="poff">📶 Modo offline — datos guardados localmente</div>
+            <div class="ptabs">
+              <div class="ptab on" id="ptab-ini" onclick="ptab('ini')">Inicio</div>
+              <div class="ptab" id="ptab-cie" onclick="ptab('cie')">Cierre</div>
+              <div class="ptab" id="ptab-sos" onclick="ptab('sos')" style="color:var(--red);font-weight:600">🆘 SOS</div>
+            </div>
+            <!-- INICIO -->
+            <div id="pf-ini">
+              <label class="plbl">Nombre del chofer</label>
+              <input class="pinput" type="text" placeholder="Ej: Carlos Rojas" id="pni-nm">
+              <div class="prow">
+                <div><label class="plbl">Placa</label><input class="pinput" type="text" placeholder="AAB-345" id="pni-pl"></div>
+                <div><label class="plbl">Turno</label><select class="pinput"><option>Mañana</option><option>Tarde</option><option>Noche</option></select></div>
+              </div>
+              <div class="prow">
+                <div><label class="plbl">KM inicial</label><input class="pinput" type="number" placeholder="48210"></div>
+                <div><label class="plbl">Combustible (L)</label><input class="pinput" type="number" placeholder="120"></div>
+              </div>
+              <label class="plbl">Ruta asignada</label>
+              <select class="pinput"><option>Tigrito → El Tigre</option><option>Pariaguán → San Tomé</option><option>Taladro 105 → Base</option></select>
+              <label class="plbl" style="color:var(--red);font-weight:600">📸 Foto odómetro (obligatoria)</label>
+              <div class="uzone" id="uz-odo" onclick="simUp('uz-odo','ul-odo')"><div style="font-size:22px;margin-bottom:4px">📷</div><div class="ulbl" id="ul-odo">Toca para tomar foto del odómetro</div></div>
+              <label class="plbl" style="color:var(--red);font-weight:600">📸 Foto voucher combustible (obligatoria)</label>
+              <div class="uzone" id="uz-cb" onclick="simUp('uz-cb','ul-cb')"><div style="font-size:22px;margin-bottom:4px">⛽</div><div class="ulbl" id="ul-cb">Toca para fotografiar el voucher</div></div>
+              <button class="psub" onclick="psubIni()">Iniciar guardia</button>
+              <div class="sync-st"><div class="sync-dot" style="width:6px;height:6px;border-radius:50%;background:var(--amb)"></div><span>3 registros pendientes de sync</span></div>
+            </div>
+            <!-- CIERRE -->
+            <div id="pf-cie" style="display:none">
+              <div class="prow">
+                <div><label class="plbl">KM final</label><input class="pinput" type="number" placeholder="48387"></div>
+                <div><label class="plbl">Hora</label><input class="pinput" type="time" value="16:30"></div>
+              </div>
+              <label class="plbl">Novedades del turno</label>
+              <textarea class="pinput" rows="3" placeholder="Describe incidentes, averías o novedades..."></textarea>
+              <label class="plbl" style="color:var(--red);font-weight:600">📸 Foto odómetro final (obligatoria)</label>
+              <div class="uzone" id="uz-odf" onclick="simUp('uz-odf','ul-odf')"><div style="font-size:22px;margin-bottom:4px">📷</div><div class="ulbl" id="ul-odf">Toca para tomar foto del odómetro final</div></div>
+              <button class="psub" style="background:var(--teal)" onclick="psubCie()">Cerrar guardia</button>
+            </div>
+            <!-- SOS -->
+            <div id="pf-sos" style="display:none">
+              <div style="background:var(--redbg);border:1px solid var(--redbd);border-radius:var(--r);padding:12px;text-align:center;margin-bottom:12px">
+                <div style="font-size:28px;margin-bottom:6px">🆘</div>
+                <div style="font-size:13px;font-weight:700;color:var(--red);font-family:var(--fd)">Botón de emergencia</div>
+                <div style="font-size:11px;color:var(--t2);margin-top:4px">Envía GPS y datos del vehículo al supervisor inmediatamente.</div>
+              </div>
+              <label class="plbl">Tipo de emergencia</label>
+              <select class="pinput" id="sos-tipo">
+                <option>Accidente de vehículo</option>
+                <option>Panne mecánica / Requiero grúa</option>
+                <option>Requiero vehículo de auxilio</option>
+                <option>Emergencia médica</option>
+                <option>Otro</option>
+              </select>
+              <label class="plbl">Descripción</label>
+              <textarea class="pinput" rows="2" id="sos-desc" placeholder="Describe brevemente la situación..."></textarea>
+              <div style="background:var(--bluebg);border:1px solid var(--blue);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--blue);margin-bottom:10px">📍 GPS: 09°31'22"N 64°09'08"W · ±8m</div>
+              <button class="sosb" id="sos-mb" onclick="trigSOS()">🆘 ENVIAR ALERTA SOS</button>
+              <div style="font-size:10px;color:var(--t3);text-align:center;margin-top:8px">Notificará al supervisor y equipo de auxilio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="ct" style="margin-bottom:14px">Flujo offline → sincronización</div>
+        <div class="tl">
+          <div class="tli"><div class="tld tld-g" style="color:var(--grn)">✓</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Formulario completado</div><div style="font-size:12px;color:var(--t2)">Guardado en SQLite local del teléfono</div><div style="font-size:11px;color:var(--t3)">Sin conexión · 06:10 am</div></div></div>
+          <div class="tli"><div class="tld tld-g" style="color:var(--grn)">✓</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Fotos adjuntadas</div><div style="font-size:12px;color:var(--t2)">Odómetro + voucher en cache local</div><div style="font-size:11px;color:var(--t3)">Sin conexión · 06:12 am</div></div></div>
+          <div class="tli"><div class="tld tld-g" style="color:var(--grn)">✓</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">GPS logging activo</div><div style="font-size:12px;color:var(--t2)">Posición cada 30 s en cache local</div><div style="font-size:11px;color:var(--t3)">Sin conexión · continuo</div></div></div>
+          <div class="tli"><div class="tld tld-a" style="color:var(--amb)">⏳</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Señal recuperada</div><div style="font-size:12px;color:var(--t2)">3 guardias y 847 puntos GPS en cola</div><div style="font-size:11px;color:var(--t3)">Conexión restaurada · 10:45 am</div></div></div>
+          <div class="tli"><div class="tld tld-r" style="color:var(--red)">!</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Auditoría ejecutada</div><div style="font-size:12px;color:var(--t2)">Motor detectó anomalías — panel notificado</div><div style="font-size:11px;color:var(--t3)">10:46 am</div></div></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:4px solid var(--red)">
+        <div class="ct" style="color:var(--red);margin-bottom:10px">🆘 Protocolo SOS</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:10px">Al activar SOS desde la app:<br><span style="color:var(--ink)">1.</span> GPS enviado al panel inmediatamente.<br><span style="color:var(--ink)">2.</span> Alerta crítica para todos los supervisores.<br><span style="color:var(--ink)">3.</span> Tipo registrado: accidente, grúa, médica.<br><span style="color:v
+<!-- ── APP CHOFER SIM ── -->
+<div class="dsec" id="sec-app">
+  <div class="ph"><div><h2>Simulador App Chofer</h2><p>Vista previa del flujo de guardia del conductor</p></div></div>
+  <div class="appsim">
+    <div>
+      <div class="phone">
+        <div class="pnotch"></div>
+        <div class="pscreen">
+          <div class="pbar" style="background:var(--acc)">
+            <span style="font-size:14px;color:rgba(255,255,255,.7)">&#8592;</span>
+            <span class="pbar-t" id="pt-title">Inicio de guardia</span>
+            <span style="font-size:15px;color:rgba(255,255,255,.6)">&#8942;</span>
+          </div>
+          <div class="pcon">
+            <div class="poff">&#128246; Modo offline &#8212; datos guardados localmente</div>
+            <div class="ptabs">
+              <div class="ptab on" id="ptab-ini" onclick="ptab('ini')">Inicio</div>
+              <div class="ptab" id="ptab-cie" onclick="ptab('cie')">Cierre</div>
+              <div class="ptab" id="ptab-sos" onclick="ptab('sos')" style="color:var(--red);font-weight:600">&#128682; SOS</div>
+            </div>
+            <div id="pf-ini">
+              <label class="plbl">Nombre del chofer</label>
+              <input class="pinput" type="text" placeholder="Ej: Carlos Rojas" id="pni-nm">
+              <div class="prow">
+                <div><label class="plbl">Placa</label><input class="pinput" type="text" placeholder="AAB-345" id="pni-pl"></div>
+                <div><label class="plbl">Turno</label><select class="pinput"><option>Mañana</option><option>Tarde</option><option>Noche</option></select></div>
+              </div>
+              <div class="prow">
+                <div><label class="plbl">KM inicial</label><input class="pinput" type="number" placeholder="48210"></div>
+                <div><label class="plbl">Combustible (L)</label><input class="pinput" type="number" placeholder="120"></div>
+              </div>
+              <label class="plbl">Ruta asignada</label>
+              <select class="pinput"><option>Tigrito &#8594; El Tigre</option><option>Pariaguán &#8594; San Tomé</option><option>Taladro 105 &#8594; Base</option></select>
+              <label class="plbl" style="color:var(--red);font-weight:600">&#128248; Foto odómetro (obligatoria)</label>
+              <div class="uzone" id="uz-odo" onclick="simUp('uz-odo','ul-odo')"><div style="font-size:22px;margin-bottom:4px">&#128247;</div><div class="ulbl" id="ul-odo">Toca para tomar foto del odómetro</div></div>
+              <label class="plbl" style="color:var(--red);font-weight:600">&#128248; Foto voucher combustible (obligatoria)</label>
+              <div class="uzone" id="uz-cb" onclick="simUp('uz-cb','ul-cb')"><div style="font-size:22px;margin-bottom:4px">&#9981;</div><div class="ulbl" id="ul-cb">Toca para fotografiar el voucher</div></div>
+              <button class="psub" onclick="psubIni()">Iniciar guardia</button>
+              <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t3);margin-top:8px"><div style="width:6px;height:6px;border-radius:50%;background:var(--amb)"></div>3 registros pendientes de sync</div>
+            </div>
+            <div id="pf-cie" style="display:none">
+              <div class="prow">
+                <div><label class="plbl">KM final</label><input class="pinput" type="number" placeholder="48387"></div>
+                <div><label class="plbl">Hora</label><input class="pinput" type="time" value="16:30"></div>
+              </div>
+              <label class="plbl">Novedades</label>
+              <textarea class="pinput" rows="3" placeholder="Describe incidentes..."></textarea>
+              <label class="plbl" style="color:var(--red);font-weight:600">&#128248; Foto odómetro final (obligatoria)</label>
+              <div class="uzone" id="uz-odf" onclick="simUp('uz-odf','ul-odf')"><div style="font-size:22px;margin-bottom:4px">&#128247;</div><div class="ulbl" id="ul-odf">Toca para tomar foto del odómetro final</div></div>
+              <button class="psub" style="background:var(--teal)" onclick="psubCie()">Cerrar guardia</button>
+            </div>
+            <div id="pf-sos" style="display:none">
+              <div style="background:var(--redbg);border:1px solid var(--redbd);border-radius:var(--r);padding:12px;text-align:center;margin-bottom:12px">
+                <div style="font-size:28px;margin-bottom:6px">&#128682;</div>
+                <div style="font-size:13px;font-weight:700;color:var(--red);font-family:var(--fd)">Botón de emergencia</div>
+                <div style="font-size:11px;color:var(--t2);margin-top:4px">Envía GPS y datos al supervisor inmediatamente.</div>
+              </div>
+              <label class="plbl">Tipo de emergencia</label>
+              <select class="pinput" id="sos-tipo"><option>Accidente de vehículo</option><option>Panne mecánica / Requiero grúa</option><option>Requiero vehículo de auxilio</option><option>Emergencia médica</option><option>Otro</option></select>
+              <label class="plbl">Descripción</label>
+              <textarea class="pinput" rows="2" id="sos-desc" placeholder="Describe brevemente..."></textarea>
+              <div style="background:var(--bluebg);border:1px solid var(--blue);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--blue);margin-bottom:10px">&#128205; GPS: 09°31'22"N 64°09'08"W · ±8m</div>
+              <button class="sosb" id="sos-mb" onclick="trigSOS()">&#128682; ENVIAR ALERTA SOS</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="ct" style="margin-bottom:14px">Flujo offline &#8594; sincronización</div>
+        <div class="tl">
+          <div class="tli"><div class="tld tld-g" style="color:var(--grn)">&#10003;</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Formulario completado</div><div style="font-size:12px;color:var(--t2)">Guardado en SQLite local del teléfono</div></div></div>
+          <div class="tli"><div class="tld tld-g" style="color:var(--grn)">&#10003;</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Fotos adjuntadas</div><div style="font-size:12px;color:var(--t2)">Odómetro + voucher en cache local</div></div></div>
+          <div class="tli"><div class="tld tld-a" style="color:var(--amb)">&#9203;</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Señal recuperada</div><div style="font-size:12px;color:var(--t2)">Guardias y GPS en cola de sync</div></div></div>
+          <div class="tli"><div class="tld tld-r" style="color:var(--red)">!</div><div><div style="font-size:13px;font-weight:500;color:var(--ink)">Auditoría ejecutada</div><div style="font-size:12px;color:var(--t2)">Motor detectó anomalías — panel notificado</div></div></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:4px solid var(--red)">
+        <div class="ct" style="color:var(--red);margin-bottom:10px">&#128682; Protocolo SOS</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:10px">Al activar SOS:<br>1. GPS enviado al panel.<br>2. Alerta para todos los supervisores.<br>3. Tipo registrado: accidente, grúa, médica.<br>4. Supervisor despacha auxilio.<br>5. Incidente queda en la guardia activa.</div>
+        <button class="btn btn-out" style="font-size:12px;color:var(--red);border-color:var(--red)" onclick="ptab('sos');toast('Pestaña SOS activada')">Ver botón SOS &#8594;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FLOTA ── -->
+<div class="dsec" id="sec-flota">
+  <div class="ph"><div><h2>Flota registrada</h2><p>Vehículos activos y estado operativo</p></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div class="card"><div class="ct" style="margin-bottom:10px">Toyota Hilux · AAB-345</div><div style="font-size:12px;color:var(--t2);line-height:1.9"><div>Chofer: J. Materán</div><div>KM actuales: 48,387</div><div>Rendimiento esperado: 8–10 km/L</div><div style="color:var(--red);font-weight:500">&#9888; Infracción SHA activa</div></div></div>
+    <div class="card"><div class="ct" style="margin-bottom:10px">Encava ENT 610 · BAC-712</div><div style="font-size:12px;color:var(--t2);line-height:1.9"><div>Chofer: R. Medina</div><div>KM actuales: 122,998</div><div>Rendimiento esperado: 6–7 km/L</div><div style="color:var(--amb);font-weight:500">&#9888; Sobreconsumo detectado</div></div></div>
+    <div class="card"><div class="ct" style="margin-bottom:10px">Yutong ZK6118 · XAZ-201</div><div style="font-size:12px;color:var(--t2);line-height:1.9"><div>Chofer: L. Pérez</div><div>KM actuales: 74,568</div><div>Rendimiento esperado: 6–8 km/L</div><div style="color:var(--grn);font-weight:500">&#10003; Operativo normal</div></div></div>
+  </div>
+</div>
+
+<!-- ── COMBUSTIBLE ── -->
+<div class="dsec" id="sec-consumo">
+  <div class="ph"><div><h2>Control de combustible</h2><p>Rendimiento por vehículo · Julio 2025</p></div></div>
+  <div class="mrow">
+    <div class="mc"><div class="mc-lbl">Litros cargados</div><div class="mc-val">1,840</div><div class="mc-sub">Este mes</div></div>
+    <div class="mc"><div class="mc-lbl">Rendimiento promedio</div><div class="mc-val">7.4</div><div class="mc-sub">km/litro</div></div>
+    <div class="mc"><div class="mc-lbl">Alertas sobreconsumo</div><div class="mc-val" style="color:var(--amb)">2</div><span class="mbadge mb-a">Este mes</span></div>
+    <div class="mc"><div class="mc-lbl">Ahorro estimado</div><div class="mc-val" style="color:var(--grn)">340L</div><div class="mc-sub">vs. mes anterior</div></div>
+  </div>
+  <div class="card">
+    <div class="ct" style="margin-bottom:14px">Rendimiento por unidad</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--t2)">XAZ-201</div><div style="flex:1;height:10px;background:var(--s);border-radius:5px;overflow:hidden"><div style="height:100%;width:69%;background:var(--grn);border-radius:5px"></div></div><div style="font-size:12px;font-weight:600;color:var(--grn);min-width:60px">6.9 km/L</div></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--t2)">AAB-345</div><div style="flex:1;height:10px;background:var(--s);border-radius:5px;overflow:hidden"><div style="height:100%;width:75%;background:var(--grn);border-radius:5px"></div></div><div style="font-size:12px;font-weight:600;color:var(--grn);min-width:60px">7.4 km/L</div></div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:100px;font-size:12px;color:var(--t2)">BAC-712</div><div style="flex:1;height:10px;background:var(--s);border-radius:5px;overflow:hidden"><div style="height:100%;width:38%;background:var(--red);border-radius:5px"></div></div><div style="font-size:12px;font-weight:600;color:var(--red);min-width:60px">3.8 km/L &#9888;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ── FIRMAS DIGITALES ──
+═══════════════════════════════════ -->
+<div class="dsec" id="sec-firmas">
+  <div class="ph">
+    <div><h2>Firmas Digitales</h2><p>Planillas de servicio firmadas electronicamente por chofer y supervisor</p></div>
+    <button class="btn btn-acc" onclick="openSignModal()">+ Nueva planilla</button>
+  </div>
+
+  <!-- METRICS -->
+  <div class="mrow" style="grid-template-columns:repeat(4,1fr)">
+    <div class="mc"><div class="mc-lbl">Planillas hoy</div><div class="mc-val">7</div><span class="mbadge mb-g">5 firmadas</span></div>
+    <div class="mc"><div class="mc-lbl">Pendientes firma</div><div class="mc-val" style="color:var(--amb)">2</div><span class="mbadge mb-a">Chofer / Sup.</span></div>
+    <div class="mc"><div class="mc-lbl">Firmadas este mes</div><div class="mc-val">124</div><div class="mc-sub">Julio 2025</div></div>
+    <div class="mc"><div class="mc-lbl">Rechazadas</div><div class="mc-val" style="color:var(--red)">3</div><span class="mbadge mb-r">Requieren corrección</span></div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="frow">
+    <div class="chip on" onclick="filterPlanillas('all',this)">Todas (7)</div>
+    <div class="chip" onclick="filterPlanillas('firmada',this)">&#10003; Firmadas</div>
+    <div class="chip" onclick="filterPlanillas('pendiente',this)">&#9203; Pendientes</div>
+    <div class="chip" onclick="filterPlanillas('rechazada',this)">&#10005; Rechazadas</div>
+  </div>
+
+  <!-- PLANILLA LIST -->
+  <div id="planilla-list" style="display:flex;flex-direction:column;gap:10px">
+
+    <!-- P1 — Firmada completa -->
+    <div class="planilla-card" data-estado="firmada" style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--grn);border-radius:var(--r2);padding:14px 16px;position:relative">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">PLN-2025-001</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:var(--grnbg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">&#128203;</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:var(--ink)">Planilla de Inicio/Cierre de Guardia</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">José Materán · AAB-345 · Turno noche · 29 Jul 2025</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--grnbg);color:var(--grn)">&#10003; Firmada</span>
+      </div>
+      <!-- Datos planilla -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Servicio</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">Transporte Pers.</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">KM recorridos</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">177 km</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Combustible</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">24 L</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Pasajeros</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">8</div></div>
+      </div>
+      <!-- Firmas -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+        <div style="background:var(--grnbg);border:1px solid var(--grnbd);border-radius:var(--r);padding:10px 12px">
+          <div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Firma del chofer</div>
+          <div style="font-size:15px;font-family:'Brush Script MT',cursive,var(--f);color:var(--ink);border-bottom:1px solid var(--grn);padding-bottom:4px;margin-bottom:4px">José Materán</div>
+          <div style="font-size:10px;color:var(--grn)">&#10003; Firmado · 29/07/2025 · 06:12 am</div>
+        </div>
+        <div style="background:var(--grnbg);border:1px solid var(--grnbd);border-radius:var(--r);padding:10px 12px">
+          <div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Firma del supervisor</div>
+          <div style="font-size:15px;font-family:'Brush Script MT',cursive,var(--f);color:var(--ink);border-bottom:1px solid var(--grn);padding-bottom:4px;margin-bottom:4px">Jorge García</div>
+          <div style="font-size:10px;color:var(--grn)">&#10003; Aprobado · 29/07/2025 · 08:45 am</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="font-size:10px;font-family:monospace;color:var(--t3);flex:1">Hash SHA256: a3f8c2d1e9b4...</div>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="previewPlanilla('PLN-2025-001')">&#128065; Ver planilla</button>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="toast('PDF generado: PLN-2025-001.pdf')">&#128196; Exportar PDF</button>
+      </div>
+    </div>
+
+    <!-- P2 — Pendiente firma supervisor -->
+    <div class="planilla-card" data-estado="pendiente" style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--amb);border-radius:var(--r2);padding:14px 16px;position:relative">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">PLN-2025-002</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:var(--ambbg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">&#128203;</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:var(--ink)">Planilla de Servicio de Combustible</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">Ramón Medina · BAC-712 · Turno mañana · 29 Jul 2025</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--ambbg);color:var(--amb)">&#9203; Pend. supervisor</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Servicio</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">Carga combustible</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Litros</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">120 L</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Estación</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">PDV Tigrito</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Monto Bs</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">Bs. 840.00</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+        <div style="background:var(--grnbg);border:1px solid var(--grnbd);border-radius:var(--r);padding:10px 12px">
+          <div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Firma del chofer</div>
+          <div style="font-size:15px;font-family:'Brush Script MT',cursive,var(--f);color:var(--ink);border-bottom:1px solid var(--grn);padding-bottom:4px;margin-bottom:4px">Ramón Medina</div>
+          <div style="font-size:10px;color:var(--grn)">&#10003; Firmado · 29/07/2025 · 09:30 am</div>
+        </div>
+        <div style="background:var(--ambbg);border:1px solid var(--ambbd);border-radius:var(--r);padding:10px 12px">
+          <div style="font-size:10px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Firma del supervisor</div>
+          <div style="font-size:13px;color:var(--amb);border-bottom:1px dashed var(--amb);padding-bottom:8px;margin-bottom:4px;font-style:italic">Pendiente...</div>
+          <div style="font-size:10px;color:var(--amb)">&#9203; Esperando aprobación</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)">
+        <span style="font-size:11px;color:var(--t2);flex:1">Chofer ya firmó. Requiere tu firma como supervisor.</span>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="previewPlanilla('PLN-2025-002')">&#128065; Ver planilla</button>
+        <button class="btn btn-acc" style="font-size:11px;padding:5px 12px;color:#10213f" onclick="openSignModal('PLN-2025-002','supervisor')">&#9999; Firmar ahora</button>
+      </div>
+    </div>
+
+    <!-- P3 — Pendiente firma chofer -->
+    <div class="planilla-card" data-estado="pendiente" style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--amb);border-radius:var(--r2);padding:14px 16px;position:relative">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">PLN-2025-003</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:var(--ambbg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">&#128203;</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:var(--ink)">Planilla de Mantenimiento Correctivo</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">Luis Pérez · XAZ-201 · 29 Jul 2025</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--ambbg);color:var(--amb)">&#9203; Pend. chofer</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Servicio</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">Cambio de aceite</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Taller</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">Taller PDVSA S.T.</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">KM unidad</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">74,568</div></div>
+        <div style="background:var(--s);border-radius:7px;padding:7px 10px"><div style="font-size:10px;color:var(--t3)">Próx. mant.</div><div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:2px">79,568 km</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)">
+        <span style="font-size:11px;color:var(--t2);flex:1">El supervisor ya aprobó. El chofer debe firmar la recepción.</span>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="previewPlanilla('PLN-2025-003')">&#128065; Ver</button>
+        <button class="btn btn-acc" style="font-size:11px;padding:5px 12px;color:#10213f" onclick="openSignModal('PLN-2025-003','chofer')">&#9999; Firmar</button>
+      </div>
+    </div>
+
+    <!-- P4 — Rechazada -->
+    <div class="planilla-card" data-estado="rechazada" style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--red);border-radius:var(--r2);padding:14px 16px;position:relative">
+      <div style="position:absolute;top:12px;right:14px;font-size:10px;color:var(--t3);font-family:monospace">PLN-2025-000</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:40px;height:40px;background:var(--redbg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">&#128203;</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:var(--ink)">Planilla de Servicio Extra — Taladro 105</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">Ramón Medina · BAC-712 · 28 Jul 2025</div>
+        </div>
+        <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--redbg);color:var(--red)">&#10005; Rechazada</span>
+      </div>
+      <div style="background:var(--redbg);border:1px solid var(--redbd);border-radius:7px;padding:8px 10px;font-size:12px;color:var(--ink);margin-bottom:10px">
+        <strong>Motivo del rechazo:</strong> Kilometraje no coincide con odómetro. Desfase de 42 km no justificado. Requiere corrección.
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)">
+        <span style="font-size:11px;color:var(--t3);flex:1">Rechazada por Jorge García · 28/07/2025</span>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 10px" onclick="previewPlanilla('PLN-2025-000')">&#128065; Ver</button>
+        <button class="btn btn-out" style="font-size:11px;padding:5px 12px;color:var(--acc)" onclick="toast('Nueva versión de PLN-2025-000 creada')">&#128260; Nueva versión</button>
+      </div>
+    </div>
+
+  </div><!-- /planilla-list -->
+</div><!-- /sec-firmas -->
+
+</div><!-- /dmain -->
+</div><!-- /dash-body -->
+</div><!-- /pg-dash -->
+
+<!-- ════════ APP CHOFER (pantalla separada) ════════ -->
+<div id="pg-chofer" class="pg">
+<div class="chofer-nav">
+  <div style="width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:12px;color:#10213f;flex-shrink:0">VF</div>
+  <span class="cn-title" id="cn-title">VenFlota Chofer</span>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.6)"><span style="width:6px;height:6px;border-radius:50%;background:#fbbf24;display:inline-block"></span>Offline</div>
+    <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="go('pg-login')">Salir</button>
+  </div>
+</div>
+<div class="chofer-body">
+  <div class="chofer-card" style="margin-top:12px;display:flex;align-items:center;gap:12px">
+    <div style="width:44px;height:44px;border-radius:50%;background:rgba(38,77,156,.3);border:2px solid rgba(38,77,156,.5);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">&#128665;</div>
+    <div>
+      <div style="font-family:var(--fd);font-size:15px;font-weight:600;color:#fff" id="chofer-welcome">Bienvenido, Carlos Rojas</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px" id="chofer-placa-lbl">Vehículo: AAB-345</div>
+    </div>
+  </div>
+  <div class="ctabs" style="margin-top:12px">
+    <div class="ctab on" id="ct-ini" onclick="ctab('ini')">&#128203; Inicio</div>
+    <div class="ctab" id="ct-cie" onclick="ctab('cie')">&#127937; Cierre</div>
+    <div class="ctab" id="ct-firma" onclick="ctab('firma')">&#9999; Firmar</div>
+    <div class="ctab sos-tab" id="ct-sos" onclick="ctab('sos')">&#128682; SOS</div>
+  </div>
+
+  <!-- INICIO -->
+  <div id="cf-ini">
+    <div class="cbadge cbadge-off"><span>&#128246;</span>Modo offline activo</div>
+    <div class="chofer-card">
+      <h3>&#128203; Datos del turno</h3>
+      <div class="cf-row">
+        <div><label class="cf-label">Turno</label><select class="cf-input"><option>Mañana</option><option>Tarde</option><option selected>Noche</option></select></div>
+        <div><label class="cf-label">KM inicial</label><input class="cf-input" type="number" placeholder="48210"></div>
+      </div>
+      <label class="cf-label">Ruta asignada</label>
+      <select class="cf-input"><option>Taladro 105 &#8594; Base</option><option>Tigrito &#8594; El Tigre</option><option>Pariaguán &#8594; San Tomé</option></select>
+      <div class="cf-row">
+        <div><label class="cf-label">Combustible (L)</label><input class="cf-input" type="number" placeholder="120"></div>
+        <div><label class="cf-label">Hora inicio</label><input class="cf-input" type="time" value="22:00"></div>
+      </div>
+    </div>
+    <div class="chofer-card">
+      <h3 style="color:#fca5a5">&#128248; Evidencia fotográfica</h3>
+      <label class="cf-label" style="color:rgba(248,113,113,.8)">Foto del odómetro</label>
+      <div class="cf-uzone" id="cuz-odo" onclick="cUp('cuz-odo','cul-odo')"><div style="font-size:24px;margin-bottom:4px">&#128247;</div><div style="font-size:11px;color:rgba(255,255,255,.4)" id="cul-odo">Toca para tomar foto del odómetro</div></div>
+      <label class="cf-label" style="color:rgba(248,113,113,.8)">Foto del voucher de combustible</label>
+      <div class="cf-uzone" id="cuz-cb" onclick="cUp('cuz-cb','cul-cb')"><div style="font-size:24px;margin-bottom:4px">&#9981;</div><div style="font-size:11px;color:rgba(255,255,255,.4)" id="cul-cb">Toca para fotografiar el voucher</div></div>
+    </div>
+    <button class="cf-sub" onclick="csubIni()">Iniciar guardia</button>
+  </div>
+
+  <!-- CIERRE -->
+  <div id="cf-cie" style="display:none">
+    <div class="cbadge cbadge-off"><span>&#128246;</span>Modo offline activo</div>
+    <div class="chofer-card">
+      <h3>&#127937; Cierre de guardia</h3>
+      <div class="cf-row">
+        <div><label class="cf-label">KM final</label><input class="cf-input" type="number" placeholder="48387"></div>
+        <div><label class="cf-label">Hora salida</label><input class="cf-input" type="time" value="06:00"></div>
+      </div>
+      <label class="cf-label">Novedades del turno</label>
+      <textarea class="cf-input" rows="3" placeholder="Describe incidentes, averías o novedades..."></textarea>
+    </div>
+    <div class="chofer-card">
+      <h3 style="color:#fca5a5">&#128248; Foto odómetro final</h3>
+      <div class="cf-uzone" id="cuz-odf" onclick="cUp('cuz-odf','cul-odf')"><div style="font-size:24px;margin-bottom:4px">&#128247;</div><div style="font-size:11px;color:rgba(255,255,255,.4)" id="cul-odf">Toca para tomar foto del odómetro final</div></div>
+    </div>
+    <button class="cf-sub" style="background:var(--teal)" onclick="csubCie()">Cerrar guardia</button>
+  </div>
+
+  <!-- FIRMA CHOFER APP -->
+  <div id="cf-firma" style="display:none">
+    <div class="cbadge cbadge-off"><span>&#128246;</span>Modo offline activo</div>
+    <div class="chofer-card">
+      <h3>&#9999; Planillas pendientes de tu firma</h3>
+      <div style="background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.12);border-radius:var(--r);padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div><div style="font-size:12px;font-weight:600;color:#fff">PLN-2025-003 · Mantenimiento correctivo</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">XAZ-201 · 29 Jul 2025</div></div>
+          <span style="font-size:10px;background:rgba(251,191,36,.15);color:#fbbf24;padding:2px 8px;border-radius:4px">Pend. tu firma</span>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px">Cambio de aceite en Taller PDVSA San Tomé. Supervisor ya aprobó.</div>
+        <button style="width:100%;padding:9px;background:rgba(38,77,156,.3);border:1px solid rgba(38,77,156,.4);color:#a0d8ef;border-radius:7px;font-size:12px;font-weight:600;font-family:var(--f);cursor:pointer" onclick="openChoferSign()">&#9999; Firmar esta planilla</button>
+      </div>
+      <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.3);padding:8px">No hay más planillas pendientes</div>
+    </div>
+  </div>
+
+  <!-- SOS -->
+  <div id="cf-sos" style="display:none">
+    <div style="background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.3);border-radius:var(--r2);padding:16px;text-align:center;margin-bottom:12px">
+      <div style="font-size:40px;margin-bottom:8px">&#128682;</div>
+      <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:#fca5a5;margin-bottom:4px">Botón de emergencia</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5)">Envía tu ubicación GPS y datos al supervisor inmediatamente.</div>
+    </div>
+    <div class="chofer-card">
+      <h3>Tipo de emergencia</h3>
+      <select class="cf-input" id="csos-tipo"><option>Accidente de vehículo</option><option>Panne mecánica — necesito grúa</option><option>Requiero vehículo de auxilio</option><option>Emergencia médica</option><option>Situación de seguridad</option><option>Otro</option></select>
+      <label class="cf-label">Describe la situación</label>
+      <textarea class="cf-input" rows="3" id="csos-desc" placeholder="Ej: Accidente en km 42 de la carretera Tigrito-El Tigre..."></textarea>
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(38,77,156,.12);border:1px solid rgba(38,77,156,.25);border-radius:8px;padding:8px 10px;font-size:11px;color:#a0d8ef;margin-bottom:6px">
+        <span>&#128205;</span><span>GPS activo: 09°31'22"N 64°09'08"W · ±8m</span>
+      </div>
+    </div>
+    <button class="cf-sos" id="cf-sos-btn" onclick="cTrigSOS()">&#128682; ENVIAR ALERTA SOS</button>
+  </div>
+</div>
+</div><!-- /pg-chofer -->
+
+<!-- ════════════════════════════════════
+     MODAL FIRMA DIGITAL
+════════════════════════════════════ -->
+<div id="sign-modal" style="display:none;position:fixed;inset:0;background:rgba(16,33,63,.8);z-index:500;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)">
+  <div style="background:var(--card);border-radius:var(--r3);width:100%;max-width:640px;overflow:hidden;box-shadow:var(--sh2)">
+    <!-- Modal header -->
+    <div style="background:var(--ink);padding:16px 20px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;background:var(--acc);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px">&#9999;</div>
+      <div style="flex:1">
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:#fff" id="sign-modal-title">Firma digital de planilla</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px" id="sign-modal-id">PLN-2025-002</div>
+      </div>
+      <button onclick="closeSignModal()" style="background:rgba(1,221,253,.08);border:none;color:rgba(255,255,255,.7);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px">&#10005;</button>
+    </div>
+    <!-- Modal body -->
+    <div style="padding:20px;overflow-y:auto;max-height:calc(100vh - 160px)">
+      <!-- Resumen de planilla -->
+      <div style="background:var(--s);border-radius:var(--r);padding:14px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Resumen del servicio</div>
+        <div id="sign-service-summary" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--t2)">
+          <div><span style="color:var(--t3)">Chofer:</span> Ramón Medina</div>
+          <div><span style="color:var(--t3)">Vehículo:</span> BAC-712</div>
+          <div><span style="color:var(--t3)">Servicio:</span> Carga combustible</div>
+          <div><span style="color:var(--t3)">Fecha:</span> 29/07/2025</div>
+          <div><span style="color:var(--t3)">Litros:</span> 120 L</div>
+          <div><span style="color:var(--t3)">Estación:</span> PDV Tigrito</div>
+        </div>
+      </div>
+
+      <!-- Tipo de firma -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Firmando como</div>
+        <div style="display:flex;gap:8px">
+          <div id="sign-role-chofer" style="flex:1;padding:10px;border:2px solid var(--acc);border-radius:var(--r);background:var(--accbg);text-align:center;cursor:pointer">
+            <div style="font-size:16px;margin-bottom:4px">&#128665;</div>
+            <div style="font-size:12px;font-weight:600;color:var(--acc)">Chofer</div>
+          </div>
+          <div id="sign-role-sup" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:var(--r);text-align:center;cursor:pointer;color:var(--t2)" onclick="switchSignRole('supervisor')">
+            <div style="font-size:16px;margin-bottom:4px">&#128100;</div>
+            <div style="font-size:12px;font-weight:600">Supervisor</div>
+          </div>
+          <div id="sign-role-tes" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:var(--r);text-align:center;cursor:pointer;color:var(--t2)" onclick="switchSignRole('testigo')">
+            <div style="font-size:16px;margin-bottom:4px">&#128101;</div>
+            <div style="font-size:12px;font-weight:600">Testigo</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas firma -->
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:600;color:var(--ink)">Dibuja tu firma aquí</div>
+          <button onclick="clearCanvas()" style="font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid var(--border)">&#128260; Limpiar</button>
+        </div>
+        <canvas id="sig-canvas" width="596" height="140"
+          style="width:100%;height:140px;border:2px solid var(--border);border-radius:var(--r);cursor:crosshair;background:#fff;touch-action:none"
+          onmousedown="startDraw(event)" onmousemove="draw(event)" onmouseup="stopDraw()"
+          ontouchstart="startDrawT(event)" ontouchmove="drawT(event)" ontouchend="stopDraw()">
+        </canvas>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;display:flex;align-items:center;gap:6px">
+          <span>Nombre impreso:</span>
+          <input type="text" id="sign-name-print" placeholder="Nombre completo" style="flex:1;border:none;border-bottom:1px solid var(--border);padding:2px 6px;font-size:12px;outline:none;background:transparent;color:var(--ink)">
+        </div>
+      </div>
+
+      <!-- PIN / Confirmación -->
+      <div style="background:var(--s);border-radius:var(--r);padding:12px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Confirmar identidad</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="password" maxlength="4" id="sign-pin" placeholder="PIN de 4 dígitos" style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;outline:none;background:var(--card);color:var(--ink)">
+          <div style="font-size:11px;color:var(--t3)">La firma queda<br>registrada con hash</div>
+        </div>
+      </div>
+
+      <!-- Declaración -->
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px">
+        <input type="checkbox" id="sign-check" style="margin-top:3px;accent-color:var(--acc);width:14px;height:14px">
+        <label for="sign-check" style="font-size:12px;color:var(--t2);line-height:1.5;cursor:pointer">
+          Declaro que los datos registrados en esta planilla son correctos y acepto que mi firma digital tiene el mismo valor legal que una firma manuscrita de acuerdo a la Ley de Mensajes de Datos y Firmas Electrónicas de Venezuela (Decreto 1.204).
+        </label>
+      </div>
+
+      <!-- Botones -->
+      <div style="display:flex;gap:10px">
+        <button onclick="closeSignModal()" class="btn btn-out" style="flex:1">Cancelar</button>
+        <button onclick="submitSignature()" class="btn btn-acc" style="flex:2;justify-content:center;color:#10213f;font-weight:700">&#9999; Confirmar firma digital</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PREVIEW PLANILLA -->
+<div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(16,33,63,.8);z-index:500;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)">
+  <div style="background:var(--card);border-radius:var(--r3);width:100%;max-width:600px;overflow:hidden;box-shadow:var(--sh2)">
+    <div style="background:var(--ink);padding:14px 20px;display:flex;align-items:center;gap:10px">
+      <div style="font-family:var(--fd);font-size:15px;font-weight:600;color:#fff;flex:1" id="prev-title">Planilla PLN-2025-001</div>
+      <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="toast('PDF generado')">&#128196; PDF</button>
+      <button onclick="closePreview()" style="background:rgba(1,221,253,.08);border:none;color:rgba(255,255,255,.7);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px">&#10005;</button>
+    </div>
+    <div style="padding:24px;overflow-y:auto;max-height:70vh" id="prev-body">
+      <!-- contenido dinámico -->
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FIRMA CHOFER (desde app) -->
+<div id="chofer-sign-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)">
+  <div style="background:var(--ink2);border:1px solid rgba(1,221,253,.14);border-radius:var(--r3);width:100%;max-width:380px;overflow:hidden">
+    <div style="background:rgba(38,77,156,.8);padding:14px 16px;display:flex;align-items:center;gap:10px">
+      <div style="font-family:var(--fd);font-size:14px;font-weight:600;color:#fff;flex:1">Firma de planilla — App Chofer</div>
+      <button onclick="closeChoferSign()" style="background:rgba(1,221,253,.12);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:12px">&#10005;</button>
+    </div>
+    <div style="padding:16px">
+      <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px">PLN-2025-003 · Mantenimiento correctivo · XAZ-201</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px">Dibuja tu firma con el dedo</div>
+      <canvas id="chofer-canvas" width="340" height="120"
+        style="width:100%;height:120px;border:1px solid rgba(1,221,253,.2);border-radius:var(--r);cursor:crosshair;background:rgba(1,221,253,.04);touch-action:none"
+        onmousedown="startDrawC(event)" onmousemove="drawC(event)" onmouseup="stopDrawC()"
+        ontouchstart="startDrawCT(event)" ontouchmove="drawCT(event)" ontouchend="stopDrawC()">
+      </canvas>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;margin-bottom:14px">
+        <button onclick="clearChoferCanvas()" style="font-size:11px;color:rgba(255,255,255,.5);background:none;border:1px solid rgba(1,221,253,.16);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:var(--f)">&#128260; Limpiar</button>
+        <span style="font-size:10px;color:rgba(255,255,255,.3)">Firma con presión</span>
+      </div>
+      <input type="password" maxlength="4" id="chofer-sign-pin" placeholder="PIN de 4 dígitos" style="width:100%;padding:9px 12px;background:rgba(1,221,253,.05);border:1px solid rgba(1,221,253,.16);border-radius:var(--r);font-size:13px;color:#fff;outline:none;font-family:var(--f);margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:14px">
+        <input type="checkbox" id="chofer-sign-check" style="margin-top:2px;accent-color:#01ddfd">
+        <label for="chofer-sign-check" style="font-size:11px;color:rgba(255,255,255,.5);cursor:pointer">Confirmo que los datos son correctos y autorizo esta firma digital.</label>
+      </div>
+      <button onclick="submitChoferSign()" style="width:100%;padding:11px;background:#264d9c;color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer">&#9999; Firmar planilla</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+
+<script>
+var curRole = 'admin';
+// Drawing state
+var drawing=false, ctx=null, ctxC=null;
+
+function go(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+function selR(r){
+  curRole=r;
+  ['admin','supervisor','ope','seg'].forEach(function(x){document.getElementById('r-'+x).classList.remove('on')});
+  document.getElementById('r-'+r).classList.add('on');
+}
+function loginAdmin(){
+  var maps={admin:['Jorge García','JG','Administrador','#01ddfd'],supervisor:['María Rodríguez','MR','Supervisora','#264d9c'],operaciones:['Ana López','AL','Operaciones','#00C2A8'],seguridad:['Pedro Sulbarán','PS','Seguridad SHA','#D97706']};
+  var u=maps[curRole]||maps.admin;
+  document.getElementById('d-nm').textContent=u[0];
+  document.getElementById('d-av').textContent=u[1];
+  document.getElementById('d-av').style.background=u[3];
+  document.getElementById('d-rl').textContent=u[2];
+  document.getElementById('g-sub').textContent='Hoy · 29 Jul 2025 · Panel de '+u[0];
+  go('pg-dash');
+  toast('Bienvenido, '+u[0]);
+}
+function loginChofer(){
+  var ced=document.getElementById('c-cedula').value;
+  var pin=document.getElementById('c-pin').value;
+  var placa=document.getElementById('c-placa').value||'AAB-345';
+  if(!ced){toast('⚠ Ingresa tu número de cédula');return;}
+  if(!pin||pin.length<4){toast('⚠ El PIN debe tener 4 dígitos');return;}
+  var nombre=ced.indexOf('12345678')>-1?'José Materán':'Carlos Rojas';
+  document.getElementById('chofer-welcome').textContent='Bienvenido, '+nombre;
+  document.getElementById('chofer-placa-lbl').textContent='Vehículo: '+placa.toUpperCase();
+  go('pg-chofer');
+  toast('Bienvenido '+nombre+' · Modo offline activo');
+}
+function showSec(name){
+  document.querySelectorAll('.dsec').forEach(function(s){s.classList.remove('on')});
+  document.querySelectorAll('.si').forEach(function(s){s.classList.remove('on')});
+  document.getElementById('sec-'+name).classList.add('on');
+  var el=document.getElementById('si-'+name);
+  if(el)el.classList.add('on');
+}
+function fG(t,btn){
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')});
+  btn.classList.add('on');
+  document.querySelectorAll('.gc').forEach(function(c){c.style.display=(t==='all'||c.dataset.t===t)?'':'none'});
+}
+function mMode(m,btn){
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on')});
+  btn.classList.add('on');
+  toast('Modo '+m+' — en producción conecta Google Maps API');
+}
+function ptab(t){
+  ['ini','cie','sos'].forEach(function(x){
+    document.getElementById('pf-'+x).style.display=x===t?'':'none';
+    document.getElementById('ptab-'+x).classList.toggle('on',x===t);
+  });
+  var ts={ini:'Inicio de guardia',cie:'Cierre de guardia',sos:'🆘 Emergencia SOS'};
+  document.getElementById('pt-title').textContent=ts[t];
+}
+function ctab(t){
+  ['ini','cie','firma','sos'].forEach(function(x){
+    var el=document.getElementById('cf-'+x);
+    if(el)el.style.display=x===t?'':'none';
+    var tb=document.getElementById('ct-'+x);
+    if(tb)tb.classList.toggle('on',x===t);
+  });
+}
+function simUp(zid,lid){
+  document.getElementById(zid).classList.add('done');
+  var lbl=document.getElementById(lid);
+  lbl.textContent='✓ Foto adjuntada correctamente';
+  lbl.classList.add('ok');
+  toast('Foto adjuntada');
+}
+function cUp(zid,lid){
+  document.getElementById(zid).classList.add('done');
+  var lbl=document.getElementById(lid);
+  lbl.textContent='✓ Foto adjuntada';
+  lbl.style.color='#4ade80';
+  toast('Foto adjuntada correctamente');
+}
+function psubIni(){
+  if(!document.getElementById('uz-odo').classList.contains('done')){toast('⚠ La foto del odómetro es obligatoria');return;}
+  if(!document.getElementById('uz-cb').classList.contains('done')){toast('⚠ La foto del voucher de combustible es obligatoria');return;}
+  toast('✓ Guardia iniciada — guardada offline');
+  setTimeout(function(){toast('📡 Sincronizando...')},2000);
+}
+function psubCie(){
+  if(!document.getElementById('uz-odf').classList.contains('done')){toast('⚠ La foto del odómetro final es obligatoria');return;}
+  toast('✓ Guardia cerrada — sincronizando...');
+  setTimeout(function(){toast('⚡ Motor de auditoría ejecutado')},2500);
+}
+function csubIni(){
+  if(!document.getElementById('cuz-odo').classList.contains('done')){toast('⚠ Foto odómetro obligatoria');return;}
+  if(!document.getElementById('cuz-cb').classList.contains('done')){toast('⚠ Foto voucher obligatoria');return;}
+  toast('✓ Guardia iniciada — guardada offline');
+  setTimeout(function(){toast('📡 Sincronizando...')},2000);
+}
+function csubCie(){
+  if(!document.getElementById('cuz-odf').classList.contains('done')){toast('⚠ Foto odómetro final obligatoria');return;}
+  toast('✓ Guardia cerrada — sincronizando...');
+  setTimeout(function(){toast('⚡ Auditoría ejecutada')},2500);
+}
+function trigSOS(){
+  var tipo=document.getElementById('sos-tipo').value;
+  var nm=document.getElementById('pni-nm').value||'Carlos Rojas';
+  var pl=document.getElementById('pni-pl').value||'BAC-712';
+  var btn=document.getElementById('sos-mb');
+  btn.textContent='⏳ Enviando alerta...';btn.disabled=true;
+  setTimeout(function(){
+    btn.textContent='✓ ALERTA ENVIADA';
+    document.getElementById('sos-msg').textContent=nm+' · '+pl+' · GPS: 09°31\'N 64°09\'W · '+tipo;
+    document.getElementById('sos-banner').classList.add('show');
+    document.getElementById('sos-bell').style.display='block';
+    toast('🚨 Alerta SOS enviada al panel');
+  },1800);
+}
+function cTrigSOS(){
+  var tipo=document.getElementById('csos-tipo').value;
+  var nm=document.getElementById('chofer-welcome').textContent.replace('Bienvenido, ','');
+  var pl=document.getElementById('chofer-placa-lbl').textContent.replace('Vehículo: ','');
+  var btn=document.getElementById('cf-sos-btn');
+  btn.textContent='⏳ Enviando...';btn.disabled=true;
+  setTimeout(function(){
+    btn.textContent='✓ ALERTA SOS ENVIADA';btn.style.background='#7f1d1d';
+    document.getElementById('sos-msg').textContent=nm+' · '+pl+' · GPS: 09°31\'N 64°09\'W · '+tipo;
+    document.getElementById('sos-banner').classList.add('show');
+    document.getElementById('sos-bell').style.display='block';
+    toast('🚨 Alerta SOS enviada');
+  },1800);
+}
+function acceptSos(){document.getElementById('sos-banner').classList.remove('show');toast('✓ Auxilio despachado — incidente registrado');}
+function dismissSos(){document.getElementById('sos-banner').classList.remove('show');}
+
+/* ── FIRMA DIGITAL ── */
+function filterPlanillas(estado,btn){
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')});
+  btn.classList.add('on');
+  document.querySelectorAll('.planilla-card').forEach(function(c){
+    c.style.display=(estado==='all'||c.dataset.estado===estado)?'':'none';
+  });
+}
+function openSignModal(id,rol){
+  id=id||'PLN-NUEVA';rol=rol||'chofer';
+  document.getElementById('sign-modal-title').textContent='Firma digital — '+id;
+  document.getElementById('sign-modal-id').textContent=id+' · '+new Date().toLocaleDateString('es-VE');
+  document.getElementById('sign-modal').style.display='flex';
+  initCanvas();
+  if(rol==='supervisor')switchSignRole('supervisor');
+}
+function closeSignModal(){document.getElementById('sign-modal').style.display='none';clearCanvas();}
+function switchSignRole(r){
+  ['chofer','sup','tes'].forEach(function(x){
+    var el=document.getElementById('sign-role-'+x);
+    if(el){el.style.borderColor='var(--border)';el.style.background='';el.style.color='var(--t2)';}
+  });
+  var map={supervisor:'sup',testigo:'tes',chofer:'chofer'};
+  var key=map[r]||r;
+  var el=document.getElementById('sign-role-'+key);
+  if(el){el.style.borderColor='var(--acc)';el.style.background='var(--accbg)';el.style.color='var(--acc)';}
+}
+function initCanvas(){
+  var canvas=document.getElementById('sig-canvas');
+  ctx=canvas.getContext('2d');
+  ctx.strokeStyle='#10213f';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawing=false;
+}
+function getPos(e,canvas){
+  var r=canvas.getBoundingClientRect();
+  var scaleX=canvas.width/r.width;
+  var scaleY=canvas.height/r.height;
+  return{x:(e.clientX-r.left)*scaleX,y:(e.clientY-r.top)*scaleY};
+}
+function startDraw(e){drawing=true;var p=getPos(e,e.target);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();}
+function draw(e){if(!drawing)return;var p=getPos(e,e.target);ctx.lineTo(p.x,p.y);ctx.stroke();e.preventDefault();}
+function stopDraw(){drawing=false;}
+function startDrawT(e){drawing=true;var t=e.touches[0];var p=getPos(t,e.target);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();}
+function drawT(e){if(!drawing)return;var t=e.touches[0];var p=getPos(t,e.target);ctx.lineTo(p.x,p.y);ctx.stroke();e.preventDefault();}
+function clearCanvas(){if(ctx){var c=document.getElementById('sig-canvas');ctx.clearRect(0,0,c.width,c.height);}}
+function isCanvasBlank(canvas){var ctx2=canvas.getContext('2d');var d=ctx2.getImageData(0,0,canvas.width,canvas.height).data;for(var i=3;i<d.length;i+=4){if(d[i]!==0)return false;}return true;}
+function submitSignature(){
+  var canvas=document.getElementById('sig-canvas');
+  var pin=document.getElementById('sign-pin').value;
+  var chk=document.getElementById('sign-check').checked;
+  var nm=document.getElementById('sign-name-print').value;
+  if(isCanvasBlank(canvas)){toast('⚠ Debes dibujar tu firma en el recuadro');return;}
+  if(!nm){toast('⚠ Escribe tu nombre impreso');return;}
+  if(!pin||pin.length<4){toast('⚠ Ingresa tu PIN de 4 dígitos');return;}
+  if(!chk){toast('⚠ Debes aceptar la declaración');return;}
+  closeSignModal();
+  var hash='h'+Math.random().toString(36).substr(2,12).toUpperCase();
+  toast('✓ Planilla firmada — Hash: '+hash);
+  setTimeout(function(){
+    var pending=document.querySelector('.planilla-card[data-estado="pendiente"]');
+    if(pending){
+      pending.dataset.estado='firmada';
+      pending.style.borderLeftColor='var(--grn)';
+      var badge=pending.querySelector('[style*="Pend"]');
+      if(badge){badge.textContent='✓ Firmada';badge.style.background='var(--grnbg)';badge.style.color='var(--grn)';}
+    }
+  },300);
+}
+/* Chofer canvas */
+var drawingC=false,ctxC=null;
+function initChoferCanvas(){
+  var canvas=document.getElementById('chofer-canvas');
+  ctxC=canvas.getContext('2d');
+  ctxC.strokeStyle='#a0d8ef';ctxC.lineWidth=2.5;ctxC.lineCap='round';ctxC.lineJoin='round';
+  ctxC.clearRect(0,0,canvas.width,canvas.height);
+}
+function startDrawC(e){if(!ctxC)initChoferCanvas();drawingC=true;var p=getPos(e,e.target);ctxC.beginPath();ctxC.moveTo(p.x,p.y);e.preventDefault();}
+function drawC(e){if(!drawingC)return;var p=getPos(e,e.target);ctxC.lineTo(p.x,p.y);ctxC.stroke();e.preventDefault();}
+function stopDrawC(){drawingC=false;}
+function startDrawCT(e){if(!ctxC)initChoferCanvas();drawingC=true;var t=e.touches[0];var p=getPos(t,e.target);ctxC.beginPath();ctxC.moveTo(p.x,p.y);e.preventDefault();}
+function drawCT(e){if(!drawingC)return;var t=e.touches[0];var p=getPos(t,e.target);ctxC.lineTo(p.x,p.y);ctxC.stroke();e.preventDefault();}
+function clearChoferCanvas(){if(ctxC){var c=document.getElementById('chofer-canvas');ctxC.clearRect(0,0,c.width,c.height);}}
+function openChoferSign(){
+  document.getElementById('chofer-sign-modal').style.display='flex';
+  setTimeout(initChoferCanvas,100);
+}
+function closeChoferSign(){document.getElementById('chofer-sign-modal').style.display='none';}
+function submitChoferSign(){
+  var canvas=document.getElementById('chofer-canvas');
+  var pin=document.getElementById('chofer-sign-pin').value;
+  var chk=document.getElementById('chofer-sign-check').checked;
+  if(isCanvasBlank(canvas)){toast('⚠ Dibuja tu firma en el recuadro');return;}
+  if(!pin||pin.length<4){toast('⚠ Ingresa tu PIN de 4 dígitos');return;}
+  if(!chk){toast('⚠ Debes aceptar los términos');return;}
+  closeChoferSign();
+  var hash='h'+Math.random().toString(36).substr(2,10).toUpperCase();
+  toast('✓ Planilla PLN-2025-003 firmada — Hash: '+hash);
+}
+function previewPlanilla(id){
+  document.getElementById('prev-title').textContent='Planilla '+id;
+  var previews={
+    'PLN-2025-001':'<div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:4px">VenFlota · PDVSA Distrito Norte</div><div style="text-align:center;font-size:12px;color:var(--t3);margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)">PLANILLA DE INICIO/CIERRE DE GUARDIA · PLN-2025-001</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px"><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">Chofer</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">José Materán</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">Vehículo</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">Toyota Hilux · AAB-345</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">Turno</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">Noche · 29/07/2025</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">Ruta</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">Taladro 105 → Base</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">KM inicial</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">48,210</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">KM final</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">48,387</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">Combustible</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">24 L cargados</div></div><div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px">Pasajeros</div><div style="font-size:13px;font-weight:500;color:var(--ink);margin-top:3px">8</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)"><div style="border:1px solid var(--grnbd);border-radius:var(--r);padding:12px;background:var(--grnbg)"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Firma del chofer</div><div style="font-size:18px;font-family:cursive;color:var(--ink);padding-bottom:4px;border-bottom:1px solid var(--grn);margin-bottom:6px">José Materán</div><div style="font-size:10px;color:var(--grn)">✓ 29/07/2025 · 06:12 am</div></div><div style="border:1px solid var(--grnbd);border-radius:var(--r);padding:12px;background:var(--grnbg)"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Firma del supervisor</div><div style="font-size:18px;font-family:cursive;color:var(--ink);padding-bottom:4px;border-bottom:1px solid var(--grn);margin-bottom:6px">Jorge García</div><div style="font-size:10px;color:var(--grn)">✓ 29/07/2025 · 08:45 am</div></div></div><div style="margin-top:14px;padding:8px 10px;background:var(--s);border-radius:7px;font-size:10px;color:var(--t3);font-family:monospace">Hash SHA256: a3f8c2d1e9b4f7a2c3d8e1f0b5c9a6d2 · Válido bajo Decreto 1.204 Venezuela</div>',
+    'PLN-2025-002':'<div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:4px">VenFlota · PDVSA Distrito Norte</div><div style="text-align:center;font-size:12px;color:var(--t3);margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)">PLANILLA DE SERVICIO DE COMBUSTIBLE · PLN-2025-002</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><div style="font-size:10px;color:var(--t3)">Chofer</div><div style="font-size:13px;font-weight:500;color:var(--ink)">Ramón Medina</div></div><div><div style="font-size:10px;color:var(--t3)">Vehículo</div><div style="font-size:13px;font-weight:500;color:var(--ink)">BAC-712</div></div><div><div style="font-size:10px;color:var(--t3)">Litros cargados</div><div style="font-size:13px;font-weight:500;color:var(--ink)">120 L</div></div><div><div style="font-size:10px;color:var(--t3)">Estación</div><div style="font-size:13px;font-weight:500;color:var(--ink)">PDV Tigrito</div></div></div><div style="margin-top:16px;padding:10px;background:var(--ambbg);border:1px solid var(--ambbd);border-radius:7px;font-size:12px;color:var(--amb)">⚠ Pendiente firma del supervisor</div>',
+    'PLN-2025-003':'<div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:4px">VenFlota · PDVSA Distrito Norte</div><div style="text-align:center;font-size:12px;color:var(--t3);margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)">PLANILLA DE MANTENIMIENTO CORRECTIVO · PLN-2025-003</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><div style="font-size:10px;color:var(--t3)">Chofer</div><div style="font-size:13px;font-weight:500">Luis Pérez</div></div><div><div style="font-size:10px;color:var(--t3)">Unidad</div><div style="font-size:13px;font-weight:500">Yutong ZK6118 · XAZ-201</div></div><div><div style="font-size:10px;color:var(--t3)">Servicio</div><div style="font-size:13px;font-weight:500">Cambio de aceite y filtros</div></div><div><div style="font-size:10px;color:var(--t3)">Taller</div><div style="font-size:13px;font-weight:500">PDVSA San Tomé</div></div></div><div style="margin-top:16px;padding:10px;background:var(--ambbg);border:1px solid var(--ambbd);border-radius:7px;font-size:12px;color:var(--amb)">⚠ Pendiente firma del chofer (recepción)</div>',
+    'PLN-2025-000':'<div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:4px">VenFlota · PDVSA Distrito Norte</div><div style="text-align:center;font-size:12px;color:var(--t3);margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)">PLANILLA RECHAZADA · PLN-2025-000</div><div style="padding:12px;background:var(--redbg);border:1px solid var(--redbd);border-radius:8px;font-size:12px;color:var(--red);margin-bottom:12px">❌ Rechazada: Kilometraje no coincide. Desfase de 42 km sin justificación.</div><div style="font-size:12px;color:var(--t2)">Esta planilla fue rechazada el 28/07/2025 y requiere corrección. Crea una nueva versión con los datos correctos.</div>'
+  };
+  document.getElementById('prev-body').innerHTML=previews[id]||'<p style="color:var(--t2);font-size:13px">Contenido no disponible.</p>';
+  document.getElementById('preview-modal').style.display='flex';
+}
+function closePreview(){document.getElementById('preview-modal').style.display='none';}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(function(){t.classList.remove('show')},3200);
+}
+</script>
+</body>
+</html>
