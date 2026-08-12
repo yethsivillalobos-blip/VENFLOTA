@@ -1,6 +1,6 @@
 const CACHE_NAME = 'venflota-cache-v1';
 // IMPORTANTE: Cambiaremos esta URL cuando Render te dé el link de tu servidor
-const API_URL = 'https://TU_API_EN_RENDER.onrender.com/api/v1'; 
+const API_URL = 'https://venflota-api.onrender.com/api/v1'; 
 
 const ASSETS_TO_CACHE = [
   '/',
