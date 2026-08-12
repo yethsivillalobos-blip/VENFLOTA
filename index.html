@@ -3,479 +3,292 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VenFlota — Control de Flota Petrolera</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>VenFlota — Sistema Integrado de Flota Petrolera</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#10213f;--ink2:#101115;--ink3:#1a3060;
-  --s:#f0f4ff;--card:#fff;--card2:#e8f0ff;
-  --border:#c8d8f0;--border2:#a0b8e0;
-  --acc:#01ddfd;--acc2:#00b8d4;--accbg:#e6fcff;
-  --teal:#00C2A8;--tealbg:#E5FAF7;
-  --blue:#264d9c;--bluebg:#eef3ff;
-  --red:#DC2626;--redbg:#FEF2F2;--redbd:#FECACA;
-  --amb:#D97706;--ambbg:#FFFBEB;--ambbd:#FDE68A;
-  --grn:#16A34A;--grnbg:#F0FDF4;--grnbd:#BBF7D0;
-  --t:#10213f;--t2:#2d4a7a;--t3:#7a9abf;
-  --r:10px;--r2:14px;--r3:20px;
-  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
-  --sh2:0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.06);
-  --f:'Inter',system-ui,sans-serif;
-  --fd:'Space Grotesk',system-ui,sans-serif;
+  --bg-main:#0B0F17;--bg-card:#111827;--bg-input:#1F2937;
+  --border:#374151;--border-focus:#3B82F6;
+  --text-primary:#F9FAFB;--text-secondary:#9CA3AF;--text-muted:#6B7280;
+  --accent-blue:#2563EB;--accent-cyan:#06B6D4;
+  --status-success:#059669;--status-danger:#DC2626;
+  --font-main:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
 }
-html{scroll-behavior:smooth}
-body{font-family:var(--f);background:var(--s);color:var(--t);line-height:1.6;overflow-x:hidden}
-.pg{display:none;min-height:100vh}
-.pg.on{display:block}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;padding:0 32px;background:rgba(16,33,63,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(1,221,253,.1)}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-mark{width:32px;height:32px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:14px;color:#10213f}
-.logo-name{font-family:var(--fd);font-weight:600;font-size:16px;color:#fff;letter-spacing:-.3px}
-.nav-links{margin-left:40px;display:flex;gap:28px}
-.nav-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;transition:color .15s}
-.nav-links a:hover{color:#fff}
-.nav-r{margin-left:auto;display:flex;gap:10px;align-items:center}
-.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;font-family:var(--f)}
-.btn-ghost{background:transparent;color:rgba(255,255,255,.75);border:1px solid rgba(1,221,253,.2)}
-.btn-ghost:hover{background:rgba(1,221,253,.07);color:#fff}
-.btn-acc{background:var(--acc);color:#10213f;font-weight:600}
-.btn-acc:hover{background:var(--acc2);color:#10213f}
-.btn-out{background:transparent;color:var(--t);border:1px solid var(--border2)}
-.btn-out:hover{background:var(--card2)}
-.btn-lg{padding:13px 28px;font-size:15px;border-radius:var(--r2)}
-#pg-land{background:var(--ink2)}
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;overflow:hidden}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 20%,transparent 80%)}
-.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(1,221,253,.18) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%)}
-.hero-glow2{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(38,77,156,.20) 0%,transparent 70%);bottom:-100px;right:10%}
-.hero-c{position:relative;text-align:center;max-width:760px}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(1,221,253,.12);border:1px solid rgba(1,221,253,.25);border-radius:100px;padding:5px 14px;font-size:12px;color:rgba(1,221,253,.9);letter-spacing:.5px;text-transform:uppercase;font-weight:500;margin-bottom:24px}
-.eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--acc);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-family:var(--fd);font-size:clamp(36px,5.5vw,62px);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px}
-.hero h1 em{font-style:normal;color:var(--acc)}
-.hero p{font-size:17px;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto 36px;line-height:1.7}
-.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.demo-wrap{position:relative;margin:60px auto 0;max-width:720px;width:100%}
-.demo-lbl{font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase}
-.demo-card{background:rgba(1,221,253,.03);border:1px solid rgba(1,221,253,.14);border-radius:var(--r3);padding:20px;backdrop-filter:blur(8px)}
-.demo-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(1,221,253,.1)}
-.demo-dots{display:flex;gap:5px}
-.dd{width:10px;height:10px;border-radius:50%}
-.demo-ttl{font-size:12px;color:rgba(255,255,255,.35);flex:1;text-align:center}
-.live{display:flex;align-items:center;gap:5px;font-size:11px;color:#4ade80}
-.live span{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
-.demo-vs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.dv{background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.12);border-radius:var(--r);padding:12px}
-.dv-plate{font-family:var(--fd);font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
-.dv-info{font-size:11px;color:rgba(255,255,255,.4)}
-.dv-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;margin-top:6px}
-.ok{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
-.warn{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
-.err{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.25)}
-.ft-sec{background:var(--s);padding:80px 32px}
-.sec-lbl{font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;font-weight:600;text-align:center;margin-bottom:10px}
-.sec-title{font-family:var(--fd);font-size:clamp(26px,3.5vw,40px);font-weight:700;color:var(--ink);text-align:center;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px}
-.sec-sub{text-align:center;color:var(--t2);font-size:16px;max-width:500px;margin:0 auto 48px}
-.ft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1000px;margin:0 auto}
-.ft-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:24px;transition:all .2s}
-.ft-card:hover{box-shadow:var(--sh2);border-color:var(--border2);transform:translateY(-2px)}
-.ft-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;box-shadow:0 0 0 1px rgba(1,221,253,.2)}
-.ft-card h3{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px}
-.ft-card p{font-size:13px;color:var(--t2);line-height:1.6}
-.st-sec{background:var(--ink2);padding:64px 32px}
-.st-grid{display:grid;grid-template-columns:repeat(4,1fr);max-width:900px;margin:0 auto;border:1px solid rgba(1,221,253,.12);border-radius:var(--r2);overflow:hidden}
-.st-item{padding:32px 24px;border-right:1px solid rgba(255,255,255,.08);text-align:center}
-.st-item:last-child{border-right:none}
-.st-num{font-family:var(--fd);font-size:36px;font-weight:700;color:var(--acc);letter-spacing:-1px}
-.st-lbl{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
-.how-sec{padding:80px 32px;background:var(--card)}
-.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1000px;margin:0 auto}
-.how-step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
-.how-step:last-child{border-bottom:none}
-.how-num{width:32px;height:32px;border-radius:50%;background:var(--accbg);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0;margin-top:2px}
-.how-step h4{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px}
-.how-step p{font-size:13px;color:var(--t2)}
-.how-vis{background:var(--ink);border-radius:var(--r3);padding:24px}
-.cta-sec{background:var(--ink2);padding:80px 32px;text-align:center}
-.cta-sec h2{font-family:var(--fd);font-size:36px;font-weight:700;color:#fff;margin-bottom:12px;letter-spacing:-.5px}
-.cta-sec p{color:rgba(255,255,255,.55);font-size:16px;margin-bottom:28px}
-footer{background:var(--ink2);border-top:1px solid rgba(1,221,253,.08);padding:28px 32px;display:flex;align-items:center;justify-content:space-between}
-footer p{font-size:12px;color:rgba(255,255,255,.35)}
-#pg-login{background:var(--ink2)}
-.login-hub{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px}
-.login-hub-inner{width:100%;max-width:860px}
-.login-hub-title{text-align:center;margin-bottom:40px}
-.login-hub-title h2{font-family:var(--fd);font-size:28px;font-weight:700;color:#fff;letter-spacing:-.5px;margin-bottom:8px}
-.login-hub-title p{color:rgba(255,255,255,.45);font-size:14px}
-.login-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.lc{background:rgba(1,221,253,.03);border:1px solid rgba(1,221,253,.14);border-radius:var(--r3);padding:36px;transition:border-color .2s}
-.lc:hover{border-color:rgba(1,221,253,.25)}
-.lc-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
-.lc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.lc-icon-admin{background:rgba(1,221,253,.15);border:1px solid rgba(1,221,253,.3)}
-.lc-icon-chofer{background:rgba(38,77,156,.15);border:1px solid rgba(38,77,156,.3)}
-.lc-title{font-family:var(--fd);font-size:16px;font-weight:600;color:#fff}
-.lc-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
-.f-label{display:block;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:6px}
-.f-input{width:100%;padding:10px 14px;background:rgba(1,221,253,.05);border:1px solid rgba(1,221,253,.16);border-radius:var(--r);font-size:13px;color:#fff;outline:none;transition:all .15s;font-family:var(--f);margin-bottom:12px}
-.f-input::placeholder{color:rgba(255,255,255,.25)}
-.f-input:focus{border-color:var(--acc);background:rgba(1,221,253,.07);box-shadow:0 0 0 3px rgba(1,221,253,.15)}
-.f-input-chofer:focus{border-color:#01ddfd;box-shadow:0 0 0 3px rgba(1,221,253,.15)}
-.role-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
-.role-btn{padding:8px 6px;border:1px solid rgba(1,221,253,.16);border-radius:var(--r);background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-family:var(--f);cursor:pointer;transition:all .15s;text-align:center}
-.role-btn.on{border-color:var(--acc);background:rgba(1,221,253,.12);color:var(--acc)}
-.lsub{width:100%;padding:11px;background:var(--acc);color:#10213f;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s;margin-top:2px}
-.lsub:hover{background:var(--acc2)}
-.lsub-blue{background:#264d9c}
-.lsub-blue:hover{background:#1a3d80}
-.lback{display:block;text-align:center;color:rgba(255,255,255,.3);font-size:11px;margin-top:12px;cursor:pointer;transition:color .15s}
-.lback:hover{color:rgba(255,255,255,.6)}
-.chofer-badge{display:flex;align-items:center;gap:8px;background:rgba(38,77,156,.1);border:1px solid rgba(38,77,156,.2);border-radius:7px;padding:8px 10px;font-size:11px;color:#a0d8ef;margin-bottom:12px}
-#pg-dash{background:var(--s);min-height:100vh;display:flex;flex-direction:column}
-.dnav{height:56px;background:var(--ink);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0}
-.dnav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
-.dusr{display:flex;align-items:center;gap:8px}
-.dusr-av{width:28px;height:28px;border-radius:50%;background:var(--blue);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
-.dusr-name{font-size:13px;color:rgba(255,255,255,.75)}
-.dusr-role{font-size:10px;color:rgba(255,255,255,.35);display:block}
-.dash-body{display:flex;flex:1;overflow:hidden}
-.sidebar{width:220px;background:var(--card);border-right:2px solid var(--border);padding:16px 10px;flex-shrink:0;overflow-y:auto}
-.sb-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);font-weight:600;padding:0 10px;margin-bottom:6px;margin-top:16px}
-.sb-lbl:first-child{margin-top:0}
-.si{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--t2);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
-.si:hover{background:var(--card2);color:var(--t);border-left-color:var(--acc)}
-.si.on{background:var(--accbg);color:var(--blue);font-weight:600;border-left:3px solid var(--acc)}
-.sbadge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600;color:#fff}
-.sbd-r{background:var(--red);color:#fff}
-.sbd-a{background:var(--amb);color:#fff}
-.dmain{flex:1;overflow-y:auto;padding:20px}
-.dsec{display:none}
-.dsec.on{display:block}
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.ph h2{font-family:var(--fd);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.3px}
-.ph p{font-size:13px;color:var(--t2);margin-top:2px}
-.mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px}
-.mc-lbl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-.mc-val{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--ink);line-height:1}
-.mc-sub{font-size:11px;color:var(--t3);margin-top:4px}
-.mbadge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 8px;border-radius:5px;margin-top:6px}
-.mb-r{background:var(--redbg);color:var(--red)}
-.mb-a{background:var(--ambbg);color:var(--amb)}
-.mb-g{background:var(--grnbg);color:var(--grn)}
-.mb-b{background:var(--bluebg);color:var(--blue)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
-.card:hover{border-color:var(--acc);transition:border-color .2s}
-.ct{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--ink)}
-.glist{display:flex;flex-direction:column;gap:10px}
-.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;border-left:4px solid transparent;position:relative}
-.gc.gi{border-left-color:var(--red)}
-.gc.gr{border-left-color:var(--amb)}
-.gc.go{border-left-color:var(--grn)}
-.gc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.gav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
-.gi-name{font-size:14px;font-weight:600;color:var(--ink)}
-.gi-meta{font-size:11px;color:var(--t3);margin-top:1px}
-.gstat{font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px}
-.gsi{background:var(--redbg);color:var(--red)}
-.gsr{background:var(--ambbg);color:var(--amb)}
-.gso{background:var(--grnbg);color:var(--grn)}
-.gdatos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
-.gd{background:var(--s);border-radius:7px;padding:7px 10px}
-.gd-l{font-size:10px;color:var(--t3)}
-.gd-v{font-size:13px;font-weight:600;color:var(--ink);margin-top:2px}
-.galerts{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
-.ga{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:7px;font-size:12px}
-.ga-r{background:var(--redbg);border:1px solid var(--redbd)}
-.ga-a{background:var(--ambbg);border:1px solid var(--ambbd)}
-.ga-g{background:var(--grnbg);border:1px solid var(--grnbd)}
-.ga-code{font-family:monospace;font-size:10px;color:var(--t3);margin-top:2px;display:block}
-.gact{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
-.gact-t{font-size:11px;color:var(--t2);flex:1}
-.frow{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
-.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--t2);transition:all .15s}
-.chip.on{background:var(--accbg);border-color:var(--acc);color:var(--blue);font-weight:600}
-#gmap{width:100%;height:440px;border-radius:var(--r2);overflow:hidden;border:2px solid var(--blue);position:relative;background:#10213f;margin-bottom:12px}
-.mbtns{position:absolute;top:12px;right:12px;display:flex;gap:4px;z-index:2}
-.mbtn{background:rgba(16,33,63,.8);border:1px solid rgba(1,221,253,.2);color:rgba(255,255,255,.75);font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:all .15s;font-family:var(--f)}
-.mbtn.on{background:rgba(1,221,253,.8);border-color:var(--acc);color:#fff}
-.ginfo{position:absolute;left:12px;bottom:12px;background:rgba(16,33,63,.9);border:1px solid rgba(1,221,253,.14);border-radius:var(--r);padding:10px 12px;z-index:4;min-width:200px}
-.git{font-size:11px;font-weight:600;color:#fff;margin-bottom:6px}
-.gir{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px}
-.gdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.gleg{position:absolute;right:12px;bottom:12px;background:rgba(16,33,63,.85);border:1px solid rgba(1,221,253,.14);border-radius:var(--r);padding:8px 10px;z-index:4}
-.gli{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.6);margin-bottom:3px}
-.gli:last-child{margin-bottom:0}
-.appsim{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
-.phone{background:var(--ink);border:2px solid var(--ink3);border-radius:28px;padding:18px 16px}
-.pnotch{width:80px;height:6px;background:var(--ink3);border-radius:3px;margin:0 auto 14px}
-.pscreen{background:var(--s);border-radius:16px;overflow:hidden;min-height:520px}
-.pbar{padding:12px 14px;display:flex;align-items:center;gap:8px}
-.pbar-t{color:#fff;font-size:13px;font-weight:600;flex:1}
-.pcon{padding:14px}
-.poff{display:flex;align-items:center;gap:7px;background:var(--ambbg);border:1px solid var(--ambbd);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--amb);margin-bottom:12px;font-weight:500}
-.plbl{font-size:11px;font-weight:500;color:var(--t2);margin-bottom:5px;display:block}
-.pinput{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--ink);background:var(--card);outline:none;transition:all .15s;font-family:var(--f);margin-bottom:10px}
-.pinput:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(1,221,253,.15)}
-.prow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.uzone{border:2px dashed var(--border2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:var(--s);margin-bottom:10px}
-.uzone:hover{border-color:var(--acc);background:var(--accbg)}
-.uzone.done{border-color:var(--grn);background:var(--grnbg);border-style:solid}
-.ulbl{font-size:11px;color:var(--t3)}
-.ulbl.ok{color:var(--grn);font-weight:500}
-.sosb{width:100%;padding:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--fd);cursor:pointer;transition:all .15s;margin-top:6px;letter-spacing:.5px}
-.sosb:hover{background:#b91c1c}
-.psub{width:100%;padding:11px;background:var(--acc);color:#10213f;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s;margin-top:4px}
-.psub:hover{background:var(--acc2)}
-.ptabs{display:flex;gap:0;background:var(--s);border-radius:var(--r);padding:3px;margin-bottom:12px}
-.ptab{flex:1;padding:6px;text-align:center;font-size:11px;color:var(--t3);cursor:pointer;border-radius:7px;transition:all .15s}
-.ptab.on{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.alcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
-.altop{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.asev{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
-.asev-c{background:var(--red);color:#fff}
-.asev-r{background:var(--amb);color:#fff}
-.altitle{font-size:13px;font-weight:600;color:var(--ink);flex:1}
-.altime{font-size:11px;color:var(--t3)}
-.aldesc{font-size:13px;color:var(--t2);margin-bottom:10px;line-height:1.55}
-.altags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.atag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500}
-.at-r{background:var(--redbg);color:var(--red)}
-.at-a{background:var(--ambbg);color:var(--amb)}
-.sosbanner{background:var(--red);color:#fff;padding:12px 16px;border-radius:var(--r2);display:none;align-items:center;gap:12px;margin-bottom:14px;border:1px solid rgba(220,38,38,.5)}
-.sosbanner.show{display:flex;animation:ssin .3s ease-out}
-@keyframes ssin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.sosbbtns{margin-left:auto;display:flex;gap:8px}
-.sosbtn{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--f)}
-.sb-acc{background:rgba(1,221,253,.15);color:#fff}
-.sb-dis{background:transparent;color:rgba(255,255,255,.6)}
-.tl{display:flex;flex-direction:column}
-.tli{display:flex;gap:12px;align-items:flex-start;padding-bottom:14px;position:relative}
-.tli::before{content:'';position:absolute;left:8px;top:18px;bottom:0;width:1px;background:var(--border)}
-.tli:last-child::before{display:none}
-.tld{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;margin-top:1px}
-.tld-g{background:var(--grnbg);border:2px solid var(--grn)}
-.tld-a{background:var(--ambbg);border:2px solid var(--amb)}
-.tld-r{background:var(--redbg);border:2px solid var(--red)}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);border:1px solid rgba(1,221,253,.2);color:#fff;padding:12px 18px;border-radius:var(--r2);font-size:13px;box-shadow:var(--sh2);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
+body{font-family:var(--font-main);background:var(--bg-main);color:var(--text-primary);line-height:1.5;min-height:100vh}
+
+/* VISTAS TOTALMENTE INDEPENDIENTES */
+.view-panel{display:none;min-height:100vh}
+.view-panel.active{display:block}
+
+/* BOTONES INDUSTRIALES */
+.btn{padding:12px 24px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-main)}
+.btn-primary{background:var(--accent-blue);color:#fff}
+.btn-primary:hover{background:#1D4ED8}
+.btn-secondary{background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--text-secondary)}
+.btn-danger{background:var(--status-danger);color:#fff}
+
+/* FORMULARIO E INPUTS */
+.form-group{margin-bottom:16px;text-align:left}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.form-input{width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:6px;font-size:14px;color:#fff;outline:none;font-family:var(--font-main)}
+.form-input:focus{border-color:var(--border-focus)}
+
+/* 1. LANDING PAGE PRINCIPAL */
+.landing-container{max-width:1000px;margin:0 auto;padding:80px 24px;text-align:center}
+.landing-tag{display:inline-block;padding:6px 14px;border-radius:20px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);font-size:11px;color:var(--accent-cyan);font-family:var(--font-mono);margin-bottom:20px}
+.landing-title{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-1px;margin-bottom:16px;line-height:1.1}
+.landing-sub{font-size:15px;color:var(--text-secondary);max-width:600px;margin:0 auto 48px}
+
+.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:840px;margin:0 auto}
+.portal-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:36px 28px;text-align:left;transition:all 0.2s}
+.portal-card:hover{border-color:var(--accent-blue);transform:translateY(-2px)}
+.portal-badge{font-size:10px;font-family:var(--font-mono);color:var(--accent-cyan);text-transform:uppercase;margin-bottom:12px;display:block}
+.portal-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.portal-card p{font-size:13px;color:var(--text-secondary);margin-bottom:24px;line-height:1.6}
+
+/* 2. PANTALLAS DE LOGIN ESPECÍFICAS */
+.login-box{max-width:400px;margin:100px auto 40px;padding:32px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;text-align:center}
+.login-box h2{font-size:20px;font-weight:700;margin-bottom:6px}
+.login-box p{font-size:13px;color:var(--text-secondary);margin-bottom:24px}
+.back-link{display:inline-block;margin-top:16px;font-size:12px;color:var(--text-muted);cursor:pointer;text-decoration:underline}
+
+/* 3. TERMINAL MÓVIL CONDUCTOR */
+.driver-container{max-width:440px;margin:0 auto;padding:20px 16px}
+.driver-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+.driver-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px}
+.upload-box{border:2px dashed var(--border);border-radius:6px;padding:20px;text-align:center;cursor:pointer;background:var(--bg-input);transition:all 0.2s}
+.upload-box.done{border-color:var(--status-success);background:rgba(5,150,105,0.08)}
+
+/* 4. CONTROL CENTRAL SUPERVISOR */
+.nav-supervisor{height:60px;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between}
+.sup-layout{display:flex;min-height:calc(100vh - 60px)}
+.sup-sidebar{width:220px;background:var(--bg-card);border-right:1px solid var(--border);padding:20px 12px}
+.sup-content{flex:1;padding:28px;overflow-y:auto}
+
+/* NOTIFICACIONES TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg-card);border:1px solid var(--border);color:#fff;padding:12px 18px;border-radius:6px;font-size:12px;font-family:var(--font-mono);box-shadow:0 10px 15px -3px rgba(0,0,0,0.5);opacity:0;transform:translateY(10px);transition:all 0.2s;pointer-events:none;z-index:1000}
 .toast.show{opacity:1;transform:translateY(0)}
-#pg-chofer{background:var(--ink2)}
-.chofer-nav{height:56px;background:rgba(38,77,156,.95);display:flex;align-items:center;padding:0 20px;gap:12px}
-.cn-title{font-family:var(--fd);font-size:15px;font-weight:600;color:#fff;flex:1}
-.chofer-body{padding:16px;max-width:420px;margin:0 auto}
-.chofer-card{background:rgba(1,221,253,.04);border:1px solid rgba(1,221,253,.14);border-radius:var(--r2);padding:16px;margin-bottom:12px}
-.chofer-card h3{font-family:var(--fd);font-size:14px;font-weight:600;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.cf-label{display:block;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;font-weight:500}
-.cf-input{width:100%;padding:9px 12px;background:rgba(1,221,253,.06);border:1px solid rgba(1,221,253,.16);border-radius:8px;font-size:12px;color:#fff;outline:none;transition:all .15s;font-family:var(--f);margin-bottom:10px}
-.cf-input::placeholder{color:rgba(255,255,255,.25)}
-.cf-input:focus{border-color:#01ddfd;background:rgba(1,221,253,.08);box-shadow:0 0 0 3px rgba(1,221,253,.2)}
-.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.cf-uzone{border:2px dashed rgba(255,255,255,.2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.03);margin-bottom:10px}
-.cf-uzone:hover{border-color:rgba(1,221,253,.6);background:rgba(1,221,253,.08)}
-.cf-uzone.done{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.08);border-style:solid}
-.cf-sub{width:100%;padding:12px;background:#264d9c;color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .15s}
-.cf-sub:hover{background:#1a3d80}
-.cf-sos{width:100%;padding:14px;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--fd);cursor:pointer;transition:all .15s;letter-spacing:.5px}
-.cf-sos:hover{background:#b91c1c}
-.ctabs{display:flex;gap:0;background:rgba(1,221,253,.04);border-radius:var(--r);padding:3px;margin-bottom:14px}
-.ctab{flex:1;padding:6px 2px;text-align:center;font-size:10px;color:rgba(255,255,255,.5);cursor:pointer;border-radius:7px;transition:all .15s;font-weight:500}
-.ctab.on{background:rgba(1,221,253,.1);color:#fff}
-.ctab.sos-tab{color:rgba(248,113,113,.8)}
-.ctab.sos-tab.on{background:rgba(220,38,38,.2);color:#fca5a5}
-.cbadge{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:6px 10px;border-radius:7px;margin-bottom:10px;font-weight:500}
-.cbadge-off{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:#fbbf24}
-.planilla-card:hover{box-shadow:0 4px 20px rgba(1,221,253,.12);border-color:var(--acc)!important;transition:all .2s}
-#sig-canvas{border:2px solid var(--border)!important}
-#sig-canvas:active{border-color:var(--acc)!important}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-@media(max-width:900px){.ft-grid{grid-template-columns:1fr 1fr}.st-grid{grid-template-columns:repeat(2,1fr)}.how-vis{display:none}.how-grid{grid-template-columns:1fr}.mrow{grid-template-columns:repeat(2,1fr)}.appsim{grid-template-columns:1fr}.sidebar{display:none}.demo-vs{grid-template-columns:1fr 1fr}.login-cards{grid-template-columns:1fr}}
+
+@media(max-width:768px){.portal-grid{grid-template-columns:1fr}.sup-layout{flex-direction:column}.sup-sidebar{width:100%}}
 </style>
 </head>
 <body>
 
-<!-- LANDING PAGE -->
-<div id="pg-land" class="pg on">
-<nav>
-  <a class="logo" href="#"><div class="logo-mark">VF</div><span class="logo-name">VenFlota</span></a>
-  <div class="nav-links">
-    <a href="#features">Características</a>
-    <a href="#how">Cómo funciona</a>
-    <a href="#">SHA / PDVSA</a>
-  </div>
-  <div class="nav-r">
-    <button class="btn btn-ghost" onclick="go('pg-login')">Iniciar sesión</button>
-    <button class="btn btn-acc" onclick="go('pg-login')">Acceder →</button>
-  </div>
-</nav>
-<section class="hero">
-  <div class="hero-bg"><div class="hero-grid"></div><div class="hero-glow"></div><div class="hero-glow2"></div></div>
-  <div class="hero-c">
-    <div class="eyebrow"><span></span>Auditoría en tiempo real · SHA compatible</div>
-    <h1>Control total de tu<br><em>flota petrolera</em></h1>
-    <p>Guardias digitales, GPS satelital, control SHA de velocidad y alerta SOS. Funciona offline en zonas sin señal.</p>
-    <div class="hero-cta">
-      <button class="btn btn-acc btn-lg" onclick="go('pg-login')">Entrar al panel →</button>
-      <button class="btn btn-ghost btn-lg" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Ver características</button>
-    </div>
-  </div>
-</section>
+<!-- PANTALLA 1: LANDING PAGE (SELECCIÓN DE PORTAL) -->
+<div id="view-landing" class="view-panel active">
+  <div class="landing-container">
+    <span class="landing-tag">SISTEMA INTEGRADO DE CONTROL OPERATIVO</span>
+    <h1 class="landing-title">Plataforma de Inspección y Flota Petrolera</h1>
+    <p class="landing-sub">Seleccione su entorno de trabajo para continuar</p>
 
-<section class="ft-sec" id="features">
-  <div class="sec-lbl">Módulos del sistema</div>
-  <h2 class="sec-title">Todo lo que necesita tu operación</h2>
-  <div class="ft-grid">
-    <div class="ft-card"><div class="ft-icon" style="background:var(--accbg)">📋</div><h3>Formularios offline</h3><p>Inicio y cierre con foto obligatoria de odómetro y voucher de combustible. Sincronización automática.</p></div>
-    <div class="ft-card"><div class="ft-icon" style="background:var(--tealbg)">🛰️</div><h3>GPS satelital en vivo</h3><p>Rastreo sobre mapa. Rutas asignadas vs. reales. Detección de desvíos en tiempo real.</p></div>
-    <div class="ft-card"><div class="ft-icon" style="background:var(--redbg)">🚨</div><h3>Auditoría SHA</h3><p>Detecta excesos de velocidad por zona (taladros 30 km/h, carretera 80 km/h) con evidencia GPS.</p></div>
-  </div>
-</section>
-</div>
-
-<!-- LOGIN HUB -->
-<div id="pg-login" class="pg">
-<div class="login-hub">
-  <div class="login-hub-inner">
-    <div class="login-hub-title">
-      <h2>¿Cómo vas a ingresar?</h2>
-      <p>Selecciona tu tipo de acceso para continuar</p>
-    </div>
-    <div class="login-cards">
-      <div class="lc">
-        <div class="lc-header"><div class="lc-icon lc-icon-admin">🖥️</div><div><div class="lc-title">Panel de auditoría</div></div></div>
-        <input class="f-input" type="email" placeholder="supervisor@empresa.com" id="a-email">
-        <input class="f-input" type="password" placeholder="••••••••" id="a-pass">
-        <button class="lsub" onclick="loginAdmin()">Entrar al panel de auditoría</button>
+    <div class="portal-grid">
+      <!-- PORTAL SUPERVISOR -->
+      <div class="portal-card">
+        <span class="portal-badge">MÓDULO DE CONTROL CENTRAL</span>
+        <h3>Portal de Supervisión</h3>
+        <p>Acceso exclusivo a paneles de monitoreo, auditoría de velocidad SHA, rendimiento e historial de guardias.</p>
+        <button class="btn btn-primary" style="width:100%" onclick="setView('view-login-sup')">Ingresar a Supervisión</button>
       </div>
-      <div class="lc">
-        <div class="lc-header"><div class="lc-icon lc-icon-chofer">📱</div><div><div class="lc-title">App del chofer</div></div></div>
-        <input class="f-input f-input-chofer" type="text" placeholder="V-12345678" id="c-cedula">
-        <input class="f-input f-input-chofer" type="password" maxlength="4" placeholder="••••" id="c-pin">
-        <input class="f-input f-input-chofer" type="text" placeholder="AAB-345" id="c-placa">
-        <button class="lsub lsub-blue" onclick="loginChofer()">Entrar a la app del chofer</button>
+
+      <!-- PORTAL CONDUCTOR -->
+      <div class="portal-card">
+        <span class="portal-badge">MÓDULO DE CAMPO</span>
+        <h3>Terminal del Conductor</h3>
+        <p>Inspección de unidad, registro de odómetro inicial/final, envío de vouchers y protocolo SOS en zonas remotas.</p>
+        <button class="btn btn-secondary" style="width:100%" onclick="setView('view-login-driver')">Ingresar a Campo</button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- PANTALLA 2A: LOGIN EXCLUSIVO SUPERVISOR -->
+<div id="view-login-sup" class="view-panel">
+  <div class="login-box">
+    <h2>Ingreso de Supervisión</h2>
+    <p>Autenticación con credenciales institucionales</p>
+    <div class="form-group">
+      <label class="form-label">Correo Institucional</label>
+      <input type="email" class="form-input" id="s-email" placeholder="usuario@empresa.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input type="password" class="form-input" id="s-pass" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="loginSupervisor()">Iniciar Sesión en Panel</button>
+    <span class="back-link" onclick="setView('view-landing')">Volver a la Selección de Portal</span>
+  </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="pg-dash" class="pg">
-<div class="dnav">
-  <span style="font-family:var(--fd);font-weight:600;font-size:15px;color:#fff">VenFlota Panel</span>
-  <div class="dnav-right"><button class="btn btn-ghost" onclick="go('pg-land')">Salir</button></div>
-</div>
-<div class="dash-body">
-<div class="sidebar">
-  <div class="sb-lbl">Principal</div>
-  <div class="si on" id="si-guardias" onclick="showSec('guardias')">📋 Guardias</div>
-  <div class="si" id="si-app" onclick="showSec('app')">📱 App Chofer (sim)</div>
-</div>
-<div class="dmain">
-  <div class="dsec on" id="sec-guardias">
-    <div class="ph"><h2>Guardias del día</h2></div>
-    <p>Monitoreo activo de unidades y kilometraje.</p>
+<!-- PANTALLA 2B: LOGIN EXCLUSIVO CONDUCTOR -->
+<div id="view-login-driver" class="view-panel">
+  <div class="login-box">
+    <h2>Terminal del Conductor</h2>
+    <p>Ingrese sus datos para activar el turno de campo</p>
+    <div class="form-group">
+      <label class="form-label">Cédula de Identidad</label>
+      <input type="text" class="form-input" id="c-cedula" placeholder="V-12345678">
+    </div>
+    <div class="form-group">
+      <label class="form-label">PIN de Seguridad</label>
+      <input type="password" class="form-input" id="c-pin" maxlength="4" placeholder="••••">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Placa del Vehículo</label>
+      <input type="text" class="form-input" id="c-placa" placeholder="AAB-345">
+    </div>
+    <button class="btn btn-secondary" style="width:100%" onclick="loginDriver()">Ingresar a Terminal</button>
+    <span class="back-link" onclick="setView('view-landing')">Volver a la Selección de Portal</span>
   </div>
-  <div class="dsec" id="sec-app">
-    <div class="ph"><h2>Simulador App Chofer</h2></div>
-  </div>
-</div>
-</div>
 </div>
 
-<!-- APP CHOFER PANTALLA SEPARADA -->
-<div id="pg-chofer" class="pg">
-<div class="chofer-nav">
-  <span class="cn-title" id="cn-title">VenFlota Chofer</span>
-  <button class="btn btn-ghost" onclick="go('pg-login')">Salir</button>
-</div>
-<div class="chofer-body">
-  <div class="chofer-card">
-    <h3 id="chofer-welcome">Bienvenido, Chofer</h3>
-    <p id="chofer-placa-lbl" style="color:rgba(255,255,255,.5);font-size:12px;">Vehículo: ---</p>
+<!-- PANTALLA 3A: PANEL EXCLUSIVO DEL SUPERVISOR -->
+<div id="view-supervisor" class="view-panel">
+  <div class="nav-supervisor">
+    <div style="font-weight:700;font-family:var(--font-mono);color:var(--accent-cyan)">VENFLOTA · CONTROL CENTRAL</div>
+    <button class="btn btn-secondary" style="padding:6px 12px;font-size:11px" onclick="logout()">Cerrar Sesión</button>
   </div>
-  <div class="chofer-card">
-    <h3>📋 Inicio de Guardia</h3>
-    <label class="cf-label">Foto del odómetro</label>
-    <div class="cf-uzone" id="cuz-odo" onclick="cUp('cuz-odo','cul-odo')"><div style="font-size:24px;">📷</div><div id="cul-odo">Toca para capturar foto</div></div>
-    <label class="cf-label">Foto voucher combustible</label>
-    <div class="cf-uzone" id="cuz-cb" onclick="cUp('cuz-cb','cul-cb')"><div style="font-size:24px;">⛽</div><div id="cul-cb">Toca para capturar voucher</div></div>
-    <button class="cf-sub" onclick="csubIni()">Iniciar guardia</button>
+  <div class="sup-layout">
+    <div class="sup-sidebar">
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:12px;letter-spacing:0.5px">MÓDULOS</div>
+      <div style="padding:10px;background:var(--bg-input);border-radius:6px;font-size:13px;font-weight:600;color:#fff">Monitoreo de Guardias</div>
+    </div>
+    <div class="sup-content">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px">Auditoría de Flota en Tiempo Real</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Recepción de telemetría y cruce de odómetros cargados desde campo.</p>
+      <div class="driver-card">
+        <p style="font-size:13px;color:var(--text-muted);font-family:var(--font-mono)">Esperando registros de unidades en ruta...</p>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- PANTALLA 3B: TERMINAL MÓVIL EXCLUSIVA DEL CONDUCTOR -->
+<div id="view-driver" class="view-panel">
+  <div class="driver-container">
+    <div class="driver-header">
+      <div>
+        <div style="font-size:11px;color:var(--text-secondary);font-family:var(--font-mono)">TERMINAL OPERATIVA</div>
+        <div style="font-size:15px;font-weight:700" id="lbl-driver-name">CONDUCTOR</div>
+      </div>
+      <button class="btn btn-secondary" style="padding:6px 12px;font-size:11px" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="driver-card">
+      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px">UNIDAD ASIGNADA</div>
+      <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);color:var(--accent-cyan)" id="lbl-driver-plate">---</div>
+    </div>
+
+    <div class="driver-card">
+      <div style="font-size:12px;font-weight:700;margin-bottom:16px;letter-spacing:0.5px">REGISTRO DE INICIO DE TURNO</div>
+      
+      <div class="form-group">
+        <label class="form-label">Odómetro Inicial (KM)</label>
+        <input type="number" class="form-input" id="val-km" placeholder="Ej: 048210">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fotografía del Odómetro</label>
+        <div class="upload-box" id="box-odo" onclick="capturarFoto('box-odo','txt-odo')">
+          <span id="txt-odo" style="font-size:12px;color:var(--text-secondary)">Tocar para Capturar Imagen</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Voucher de Combustible</label>
+        <div class="upload-box" id="box-cb" onclick="capturarFoto('box-cb','txt-cb')">
+          <span id="txt-cb" style="font-size:12px;color:var(--text-secondary)">Tocar para Capturar Voucher</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="enviarGuardia()">Registrar e Iniciar Turno</button>
+    </div>
+
+    <div class="driver-card" style="border-color:var(--status-danger)">
+      <div style="font-size:12px;font-weight:700;color:var(--status-danger);margin-bottom:8px">EMERGENCIA OPERATIVA</div>
+      <button class="btn btn-danger" style="width:100%" onclick="enviarSOS()">Transmisión de Alerta SOS</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<script>
-var curRole = 'admin';
-var gpsWatchId = null;
-var coordsActuales = { lat: 0, lng: 0 };
 
-// Navegación de Vistas
-function go(id){
-  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
+<!-- LÓGICA DE CONTROL Y NAVEGACIÓN -->
+<script>
+var coordsGPS = { lat: 0, lng: 0 };
+
+// Cambiador de vista general
+function setView(viewId){
+  document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
   window.scrollTo(0,0);
 }
 
-function loginAdmin(){
-  go('pg-dash');
-  toast('Bienvenido al Panel de Auditoría');
+// Cierre de sesión y retorno a Landing Page
+function logout(){
+  setView('view-landing');
+  toast('SISTEMA: Sesión cerrada correctamente');
 }
 
-function loginChofer(){
+// Login exclusivo para Conductor
+function loginDriver(){
   var ced = document.getElementById('c-cedula').value;
   var pin = document.getElementById('c-pin').value;
   var placa = document.getElementById('c-placa').value || 'AAB-345';
-  if(!ced || !pin){ toast('⚠ Ingresa cédula y PIN'); return; }
-  
-  document.getElementById('chofer-welcome').textContent = 'Bienvenido, Carlos Rojas';
-  document.getElementById('chofer-placa-lbl').textContent = 'Vehículo: ' + placa.toUpperCase();
-  
-  // Activar GPS real al iniciar sesión de chofer
-  iniciarGPSReal();
-  go('pg-chofer');
-  toast('Modo Offline & GPS Activo');
+
+  if(!ced || !pin){ toast('ERROR: Indique cédula y PIN de acceso'); return; }
+
+  document.getElementById('lbl-driver-name').textContent = ced;
+  document.getElementById('lbl-driver-plate').textContent = placa.toUpperCase();
+
+  iniciarGPS();
+  setView('view-driver');
+  toast('TERMINAL: Modo campo activo');
 }
 
-// Captura Real de GPS mediante API Geolocation
-function iniciarGPSReal() {
-  if ('geolocation' in navigator) {
-    gpsWatchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        coordsActuales.lat = pos.coords.latitude;
-        coordsActuales.lng = pos.coords.longitude;
-        console.log('GPS Actualizado:', coordsActuales);
+// Login exclusivo para Supervisor
+function loginSupervisor(){
+  var email = document.getElementById('s-email').value;
+  var pass = document.getElementById('s-pass').value;
+
+  if(!email || !pass){ toast('ERROR: Indique credenciales institucionales'); return; }
+
+  setView('view-supervisor');
+  toast('PORTAL: Sesión de supervisión activa');
+}
+
+function iniciarGPS(){
+  if('geolocation' in navigator){
+    navigator.geolocation.watchPosition(
+      pos => {
+        coordsGPS.lat = pos.coords.latitude;
+        coordsGPS.lng = pos.coords.longitude;
       },
-      (err) => console.warn('Error GPS:', err.message),
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+      err => console.warn('GPS Error:', err.message),
+      { enableHighAccuracy: true }
     );
-  } else {
-    toast('⚠ Dispositivo sin soporte GPS');
   }
 }
 
-// Invocación Real de Cámara
-function capturarFoto(idZona, idLabel) {
+function capturarFoto(idBox, idTxt){
   const inputCam = document.createElement('input');
   inputCam.type = 'file';
   inputCam.accept = 'image/*';
-  inputCam.capture = 'environment'; // Abre la cámara trasera directamente
+  inputCam.capture = 'environment';
 
   inputCam.onchange = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if(file){
       const reader = new FileReader();
-      reader.onload = function(evt) {
-        const zone = document.getElementById(idZona);
-        const lbl = document.getElementById(idLabel);
-        zone.classList.add('done');
-        zone.dataset.fotoBase64 = evt.target.result; // Guarda la foto en memoria
-        lbl.textContent = '✓ Foto Capturada';
-        lbl.style.color = '#4ade80';
-        toast('Foto procesada correctamente');
+      reader.onload = function(evt){
+        const box = document.getElementById(idBox);
+        const txt = document.getElementById(idTxt);
+        box.classList.add('done');
+        box.dataset.base64 = evt.target.result;
+        txt.textContent = 'DOCUMENTO CAPTURADO';
+        txt.style.color = 'var(--status-success)';
+        toast('SISTEMA: Fotografía procesada');
       };
       reader.readAsDataURL(file);
     }
@@ -483,75 +296,68 @@ function capturarFoto(idZona, idLabel) {
   inputCam.click();
 }
 
-// Sobrescribir listeners para invocar la cámara real
-function cUp(zid, lid) {
-  capturarFoto(zid, lid);
+function enviarGuardia(){
+  const kmVal = document.getElementById('val-km').value;
+  const boxOdo = document.getElementById('box-odo');
+  const boxCb = document.getElementById('box-cb');
+
+  if(!kmVal){ toast('ERROR: Ingrese kilometraje de odómetro'); return; }
+  if(!boxOdo.classList.contains('done')){ toast('ERROR: Capture foto del odómetro'); return; }
+  if(!boxCb.classList.contains('done')){ toast('ERROR: Capture foto del voucher'); return; }
+
+  const payload = {
+    chofer_id: document.getElementById('c-cedula').value,
+    vehiculo_placa: document.getElementById('c-placa').value || 'AAB-345',
+    turno: 'Noche',
+    km_inicial: parseInt(kmVal),
+    litros_combustible: 120,
+    latitud: coordsGPS.lat,
+    longitud: coordsGPS.lng,
+    timestamp: new Date().toISOString()
+  };
+
+  guardarOffline(payload);
 }
 
-// Guardado Real en IndexedDB
-function guardarOfflineYSincronizar(datosGuardia) {
-  const request = indexedDB.open('VenFlotaLocalDB', 1);
-  
-  request.onupgradeneeded = (e) => {
+function guardarOffline(data){
+  const req = indexedDB.open('VenFlotaLocalDB', 1);
+  req.onupgradeneeded = e => {
     const db = e.target.result;
-    if (!db.objectStoreNames.contains('guardias')) {
+    if(!db.objectStoreNames.contains('guardias')){
       db.createObjectStore('guardias', { keyPath: 'id', autoIncrement: true });
     }
   };
-
-  request.onsuccess = (e) => {
+  req.onsuccess = e => {
     const db = e.target.result;
     const tx = db.transaction('guardias', 'readwrite');
-    datosGuardia.synced = false;
-    tx.objectStore('guardias').add(datosGuardia);
-    
+    data.synced = false;
+    tx.objectStore('guardias').add(data);
     tx.oncomplete = () => {
-      toast('✓ Guardia guardada con éxito en el teléfono');
-      if ('serviceWorker' in navigator && 'SyncManager' in window) {
-        navigator.serviceWorker.ready.then((sw) => {
-          sw.sync.register('sync-datos-venflota');
-        });
+      toast('SISTEMA: Registro guardado localmente');
+      if('serviceWorker' in navigator && 'SyncManager' in window){
+        navigator.serviceWorker.ready.then(sw => sw.sync.register('sync-datos-venflota'));
       }
     };
   };
 }
 
-function csubIni(){
-  const zOdo = document.getElementById('cuz-odo');
-  const zCb = document.getElementById('cuz-cb');
-
-  if(!zOdo.classList.contains('done')){ toast('⚠ Foto odómetro obligatoria'); return; }
-  if(!zCb.classList.contains('done')){ toast('⚠ Foto voucher obligatoria'); return; }
-  
-  const datos = {
-    chofer_id: document.getElementById('c-cedula').value || 'V-12345678',
-    vehiculo_placa: document.getElementById('chofer-placa-lbl').textContent.replace('Vehículo: ',''),
-    turno: 'Noche',
-    km_inicial: 48210,
-    litros_combustible: 120,
-    ruta_asignada: 'Taladro 105 → Base',
-    foto_odometro: zOdo.dataset.fotoBase64 || null,
-    foto_voucher: zCb.dataset.fotoBase64 || null,
-    latitud: coordsActuales.lat,
-    longitud: coordsActuales.lng,
-    timestamp: new Date().toISOString()
-  };
-  
-  guardarOfflineYSincronizar(datos);
+function enviarSOS(){
+  toast('ALERTA CRÍTICA: Transmitiendo señal SOS');
 }
 
 function toast(msg){
-  var t = document.getElementById('toast');
+  const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Registro Service Worker
-if ('serviceWorker' in navigator) {
+if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js').catch(err => console.error(err));
   });
 }
 </script>
+</body>
+</html>
