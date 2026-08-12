@@ -4,7 +4,7 @@ const API_URL = 'https://venflota-api.onrender.com/api/v1';
 
 const ASSETS_TO_CACHE = [
   '/',
-  '/venflota.html'
+  '/index.html'
 ];
 
 self.addEventListener('install', (event) => {
